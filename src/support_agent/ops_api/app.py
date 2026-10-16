@@ -5,6 +5,7 @@
                    else 503 {"ready": false, "reasons": [...]}
   GET /metrics     Prometheus text exposition (observability.metrics.REGISTRY)
   GET /api/status  JSON: queue depth/capacity, workers busy/configured, last poll, counts by state, ...
+  POST /api/poll   run a discovery poll now (same overlap guard as the scheduler); 409 if one is running
 
 `create_ops_app(runtime)` only needs duck-typed attributes: `settings`, `repo`, `portal_started`,
 `portal_error`, `last_poll_at` and `async status()`.
@@ -77,6 +78,22 @@ def create_ops_app(runtime: Any) -> FastAPI:
         ok, reasons = await readiness(runtime)
         data["ready"] = {"ready": ok, "reasons": reasons}
         return data
+
+    @app.post("/api/poll")
+    async def poll_now() -> JSONResponse:
+        """Run a discovery poll now instead of waiting for the next tick; returns the poll result."""
+        scheduler = getattr(runtime, "scheduler", None)
+        poller = getattr(runtime, "poller", None)
+        if scheduler is None or poller is None:
+            return JSONResponse({"error": "runtime not started"}, status_code=503)
+        if not await scheduler.run_now():
+            return JSONResponse({"error": "a poll is already running; try again shortly"}, status_code=409)
+        job = getattr(scheduler, "_job_task", None)
+        if job is not None:
+            with contextlib.suppress(Exception):
+                await asyncio.wait_for(asyncio.shield(job), timeout=30)
+        log.info("ops.poll_now", result=poller.last_result)
+        return JSONResponse({"result": poller.last_result})
 
     return app
 

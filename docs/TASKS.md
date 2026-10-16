@@ -14,7 +14,7 @@ Keep your row in the Progress summary current.
 ("don't stop for my approval, complete all tasks"). Agents now run their remaining tasks back to back and mark each
 one `✅ done` themselves as soon as it's finished. `⏸` is no longer used.
 
-_Last updated: 2026-10-16 — Phases 0–3 and 5 done; 1010 tests passing. Only Phase 4 (real Anthropic run, needs an API key) remains._
+_Last updated: 2026-10-16 — Phases 0–3, 5 and 6 done. Only Phase 4 (real Anthropic run, needs an API key) remains._
 
 ## Progress summary
 
@@ -29,6 +29,7 @@ _Last updated: 2026-10-16 — Phases 0–3 and 5 done; 1010 tests passing. Only 
 | 3. Hardening | all | ✅ done | 1 / 1 | — |
 | 4. Real LLM | Lead + C | ⬜ todo | 0 / 1 | — |
 | 5. Unified console (single UI, tabs) | Lead + A, C, D | ✅ done | 6 / 6 | — |
+| 6. Manual flow testing (create ticket, poll now) | Lead | ✅ done | 4 / 4 | — |
 
 ## Phase 0 — Lead
 
@@ -134,6 +135,19 @@ need :8501.
 | U4 | C | Tickets tab (incl. Human Review) and User Info tab | `dashboard/views/tickets.py`, `dashboard/views/review.py`, `dashboard/views/users.py`, `dashboard/data.py` (`tickets_count()`, `tickets(limit=100)`, `tickets_for_email()`, `customer_emails()`) | Tickets tab = lazy sub-tabs `All tickets` / `Review queue` (`key="tickets_section"`). All tickets: state + search filters, **100 rows by default**, page-size selector 100/500/1000/5000, "Load N more", "Showing N of M"; selectable table + picker + `?ticket=` deep link; detail (timeline, spans, text, user, LLM JSON, policy, drafts) and DLQ Requeue. Review queue: auto-refreshing panel fragment + separate non-refreshing review fragment (approve / edit & approve / reject, session-state callback fix kept). User Info: lookup by email or user id (form), profile (plan, account status, VIP, LTV, refunds, policy rules it triggers), orders, the user's tickets from the DB; browse table via `GET /users` (100 by default, search, load more); friendly errors for down / 401 / 404; falls back to distinct customer emails from tickets | ✅ done | 2026-10-16 | Fixed: table click now actually switches the open ticket (picker state set before render; applied only when the selection changes, so auto-refresh can't switch it). AppTest on 553-ticket DB: 100 → 200 → 500 rows; detail, requeue, approve, edit&approve (old draft superseded), reject, conflict; User Info against `create_app()` on an ephemeral port (email / id / unknown lookups, 50-user browse) and with the service down (error + DB fallback); 0 exceptions |
 | U5 | C | SQL tab (read-only) | `dashboard/views/sql.py`, `dashboard/data.py` (`check_readonly_sql()`, `run_readonly_query()` → `QueryResult`, `schema_overview()`, `SqlGuardError`, `SqlTimeout`, `READONLY_PRAGMAS`) | read-only connection (`file:…?mode=ro` + `PRAGMA query_only=ON`); guard: comments stripped + literals blanked, single complete statement, first keyword SELECT/WITH/VALUES/EXPLAIN [QUERY PLAN]/PRAGMA (allow-listed, no `=`), banned words anywhere (INSERT/UPDATE/DELETE/DROP/ALTER/CREATE/ATTACH/DETACH/VACUUM/REINDEX/ANALYZE/BEGIN/COMMIT/ROLLBACK/SAVEPOINT/RELEASE/load_extension, REPLACE INTO); `fetchmany(limit+1)` → **100 rows by default**, Rows 100/500/1000/5000, "Load next N", "showing N row(s) (more available)", elapsed ms, inferred column types, CSV download, schema browser (tables, columns, row counts), 13 examples, 5 s timeout via `set_progress_handler`, history (last 25) with re-use | ✅ done | 2026-10-16 | Guard unit-checked (15 valid accepted, 26 invalid rejected, incl. WITH…DELETE, comment/literal tricks, PRAGMA writes, multi-statement); ro connection blocks writes even if the guard is bypassed. AppTest on 553-ticket DB: 100 → 200 → 500 rows, all examples, timeout, sqlite error, DB unchanged. Also fixed `data.finished_tickets()` empty-result dtype bug found in the all-tab regression. Live screenshots (port 8765, live DB): scratchpad `shots/console_*.png` |
 | U6 | D + Lead | Tests, docs, live check | `tests/integration/test_dashboard.py`, `README.md`, `scripts/run_all.sh` | AppTest for every tab; SQL guard (writes rejected, 100-row default); README and run_all point people only at :8501; live check | ✅ done | 2026-10-16 | D: `test_dashboard.py` rewritten for the tabbed console (58), new `test_sql_guard.py` (75), +12 user-service list tests; full suite 1010 passed. Lead: README (single console, "Querying the database"), `run_all.sh` points only at :8501, stack restarted, all 4 tabs checked live in Chromium (SQL: 100 rows + "more available", DELETE rejected; User Info lists 50 users). |
+
+## Phase 6 — Manual flow testing
+
+User request (2026-10-16): "how do I create a new ticket, add a message to the queue so I can check the whole flow by
+myself". A ticket is created in the mock ticket UI, as a customer would create it. The agent then discovers it through
+the browser and runs the full pipeline. There is deliberately no direct queue push, because that would skip discovery.
+
+| ID | Owner | Task | Files | Key components | Status | Date | Note |
+|---|---|---|---|---|---|---|---|
+| T1 | Lead | Mock UI: create-ticket route + form | `mocks/ticket_ui/app.py`, `templates/new_ticket.html`, `templates/tickets.html` | `GET/POST /tickets/new` (login required; subject, customer_email, body, priority) → new `TCK-####`, status open; "New ticket" button on the list | ✅ done | 2026-10-16 | `GET/POST /tickets/new` declared before `/tickets/{ticket_id}`; validates subject, body, email and priority (400 + `new-ticket-error`); next `TCK-####`, status open, redirect `/tickets/{id}?created=1`; "+ New ticket" button on the list; `PRIORITIES` |
+| T2 | Lead | Ops API: trigger a poll now | `ops_api/app.py` | `POST /api/poll` → `scheduler.run_now()`; returns the poll result (or `409` if a poll is already running) | ✅ done | 2026-10-16 | `POST /api/poll` → `scheduler.run_now()` (same overlap guard), waits up to 30 s for the job, returns `{result: poller.last_result}`; 409 while a poll runs, 503 if the runtime isn't started |
+| T3 | Lead | Console: "New ticket" form + "Poll now" | `dashboard/views/tickets.py` (or `views/new_ticket.py`) | form on the Tickets tab posts to the mock UI (logs in with the ticket-UI credentials); quick templates (refund, angry, legal, security, how-to); then calls `POST /api/poll`; shows the new ticket id with a link that opens its detail | ✅ done | 2026-10-16 | New `dashboard/views/new_ticket.py`: "New ticket" sub-tab on Tickets; 10 templates (how-to, refunds, angry, legal, security, VIP, suspended, unknown, refusal marker); `create_ticket()` logs in to the mock UI and posts the form; `poll_now()`; live "Pipeline progress" fragment (1 s) until DONE / NEEDS_REVIEW / DLQ, with "Open ticket detail". Checked live: how-to → DONE in 0.37 s; $480 angry refund → NEEDS_REVIEW [REFUND, REFUND_HIGH_VALUE, ANGRY] |
+| T4 | Lead | Tests + docs | `tests/integration/test_new_ticket.py`, `README.md` | route, poll endpoint, console form; README "Test the flow yourself" | ✅ done | 2026-10-16 | `tests/integration/test_new_ticket.py` (14: login, routing, ids, validation, poll 200/409/503, console helpers incl. unreachable services, templates); README "Test the flow yourself" |
 
 ## Contract change requests
 

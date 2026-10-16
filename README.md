@@ -51,13 +51,13 @@ scripts/run_all.sh          # starts all four processes; Ctrl-C stops them
 | Tab | What it's for |
 |---|---|
 | **Observability** | KPIs, throughput, end-to-end latency, queue and workers, LLM calls and tokens, scheduler and poller runs, and the JSON log tail |
-| **Tickets** | every ticket (100 rows by default, then *Load more*), each ticket's timeline, spans, LLM output, policy reasons and drafts; the **Review queue** sub-tab to approve, edit or reject escalated drafts; requeue dead-letter tickets |
+| **Tickets** | every ticket (100 rows by default, then *Load more*), each ticket's timeline, spans, LLM output, policy reasons and drafts; the **Review queue** sub-tab to approve, edit or reject escalated drafts; the **New ticket** sub-tab to create a ticket and watch it go through the pipeline; requeue dead-letter tickets |
 | **User Info** | look up a customer by email or user id (profile, plan, status, VIP, orders, their tickets), or browse all users (100 by default) |
 | **SQL** | read-only SQL console on the agent's SQLite DB: first 100 rows by default, *Load next 100*, schema browser, example queries, CSV download |
 
 The other processes run in the background, and you don't need to open them: the mock ticket UI on :8001 (the "external"
 portal the agent reads through Playwright; login `agent` / `agent`), the User Info Service on :8002
-(`X-API-Key: dev-key`), and the agent's ops API on :8003 (`/health`, `/ready`, `/metrics`, `/api/status`).
+(`X-API-Key: dev-key`), and the agent's ops API on :8003 (`/health`, `/ready`, `/metrics`, `/api/status`, `POST /api/poll`).
 
 With the default settings, the 53 seed tickets settle within a few seconds: 19 drafts are posted and 34 tickets
 wait in **Tickets → Review queue**. To push more load, use **Generate** on the mock ticket UI
@@ -71,6 +71,24 @@ You can also run each process on its own: `support-agent ticket-ui | user-servic
 > **macOS note:** if `import support_agent` fails inside the venv, macOS has set the hidden flag on the editable
 > install's `.pth` file, and Python skips hidden `.pth` files. Fix it with
 > `ln -sfn "$PWD/src/support_agent" .venv/lib/python3.12/site-packages/support_agent`.
+
+## Test the flow yourself
+
+1. Open the console at http://localhost:8501 and go to **Tickets → New ticket**.
+2. Pick a template, or write your own ticket (customer email, subject, message, priority). Templates cover each path:
+   how-to question (auto-approved), small refund, large refund + angry, legal threat, security incident, enterprise
+   (VIP) customer, suspended account, unknown customer, and an LLM refusal.
+3. Leave **Poll now** ticked and click **Create ticket**. The ticket is posted to the mock ticket UI like a real
+   customer ticket, then the agent discovers it through the browser right away instead of waiting for the next poll.
+4. **Pipeline progress** updates every second: `DISCOVERED → QUEUED → PROCESSING → ENRICHED → ANALYZED →
+   POLICY_CHECKED →` `DONE` (reply posted) or `NEEDS_REVIEW` (with the rules that fired).
+5. For escalated tickets, go to **Tickets → Review queue** to approve, edit or reject the draft. The approved reply is
+   posted to the ticket within a few seconds. Click **Open ticket detail** to see every step's timing, the user
+   lookup, the LLM output and the policy decision.
+
+Use the email of a known seed customer (e.g. `maria.gonzalez@example.com`, see **User Info**) to get a user record.
+Any other email takes the `UNKNOWN_USER` path. Without the console, you can create tickets with **+ New ticket** on
+the mock ticket UI (http://localhost:8001) and trigger a poll with `curl -X POST localhost:8003/api/poll`.
 
 ## Using the real LLM
 

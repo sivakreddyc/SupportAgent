@@ -48,6 +48,7 @@ USERNAME = "agent"
 PASSWORD = "agent"
 SESSION_COOKIE = "sa_session"
 STATUSES = ("open", "pending", "escalated", "closed")
+PRIORITIES = ("low", "normal", "high", "urgent")
 MAX_GENERATE = 5000
 CHAOS_EXEMPT = ("/health", "/admin/")  # prefixes skipped by the chaos middleware
 
@@ -270,6 +271,54 @@ def create_app(
                 "status": status,
             },
         )
+
+    # Declared before /tickets/{ticket_id} so "new" is not captured as a ticket id.
+    @app.get("/tickets/new", response_model=None)
+    async def new_ticket_form(request: Request) -> Response:
+        if current_user(request) is None:
+            return to_login("/tickets/new")
+        return render(request, "new_ticket.html", {"error": None, "form": {}})
+
+    @app.post("/tickets/new", response_model=None)
+    async def new_ticket_submit(
+        request: Request,
+        subject: str = Form(""),
+        customer_email: str = Form(""),
+        body: str = Form(""),
+        priority: str = Form(""),
+    ) -> Response:
+        """Create a ticket the way a customer would. Redirects to the new ticket's detail page."""
+        if current_user(request) is None:
+            return to_login("/tickets/new")
+        form = {"subject": subject, "customer_email": customer_email, "body": body, "priority": priority}
+        error = None
+        if not subject.strip() or not body.strip():
+            error = "Subject and message are required."
+        elif not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", customer_email.strip()):
+            error = "Enter a valid customer email."
+        elif priority and priority not in PRIORITIES:
+            error = f"Priority must be one of {', '.join(PRIORITIES)}."
+        if error:
+            return render(request, "new_ticket.html", {"error": error, "form": form}, 400)
+        store: TicketStore = app.state.store
+        ticket_id = f"TCK-{store.next_number()}"
+        store.add(
+            [
+                {
+                    "ticket_id": ticket_id,
+                    "subject": subject.strip(),
+                    "customer_email": customer_email.strip().lower(),
+                    "created_at": store.next_created_at(),
+                    "priority": priority or None,
+                    "status": "open",
+                    "body": body.strip(),
+                    "messages": [],
+                    "drafts": [],
+                    "notes": [],
+                }
+            ]
+        )
+        return RedirectResponse(f"/tickets/{ticket_id}?created=1", status_code=303)
 
     @app.get("/tickets/{ticket_id}", response_model=None)
     async def ticket_detail(request: Request, ticket_id: str) -> Response:

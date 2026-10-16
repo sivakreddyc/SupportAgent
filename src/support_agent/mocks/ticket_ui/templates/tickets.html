@@ -26,6 +26,7 @@
   {% if page_no < total_pages %}<a href="/tickets?page={{ page_no + 1 }}{{ qs }}" data-testid="next-page">Next &rarr;</a>{% endif %}
 </nav>
 <div class="card" data-testid="admin-panel">
+  <a href="/tickets/new" data-testid="new-ticket-link" style="margin-right: 12px;"><button type="button">+ New ticket</button></a>
   <form method="post" action="/admin/generate" data-testid="admin-generate-form" style="display:inline">
     <input name="n" type="number" min="1" max="5000" value="10" data-testid="admin-generate-n">
     <button type="submit" data-testid="admin-generate-submit">Generate tickets</button>

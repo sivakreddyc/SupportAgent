@@ -283,12 +283,18 @@ def _list_body(db: str) -> None:
 
 def render(db: str) -> None:
     """Tickets tab: "All tickets" (auto-refreshing list + detail) and "Review queue" sub-tabs (lazy)."""
-    from support_agent.dashboard.views import review
+    from support_agent.common.config import get_settings
+    from support_agent.dashboard.views import new_ticket, review
 
-    all_tab, review_tab = st.tabs(["All tickets", "Review queue"], key="tickets_section", on_change="rerun")
+    all_tab, review_tab, new_tab = st.tabs(
+        ["All tickets", "Review queue", "New ticket"], key="tickets_section", on_change="rerun"
+    )
     with all_tab:
         if all_tab.open:
             st.fragment(_list_body, run_every=ui.refresh_every())(db)
     with review_tab:
         if review_tab.open:
             review.render(db)
+    with new_tab:
+        if new_tab.open:
+            new_ticket.render(db, get_settings())
