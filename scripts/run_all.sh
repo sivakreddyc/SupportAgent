@@ -27,9 +27,12 @@ $BIN/support-agent run & pids+=($!)
 $BIN/support-agent dashboard --port 8501 & pids+=($!)
 
 echo
-echo "  Ticket UI      http://localhost:8001   (login agent / agent)"
-echo "  User service   http://localhost:8002/docs"
-echo "  Ops API        http://localhost:8003/metrics"
-echo "  Dashboard      http://localhost:8501"
+echo "  ==> Open the SupportAgent console: http://localhost:8501"
+echo "      (tabs: Observability | Tickets | User Info | SQL)"
+echo
+echo "  Background services (no need to open them):"
+echo "    mock ticket UI   http://localhost:8001   (scraped by the agent through Playwright)"
+echo "    user service     http://localhost:8002   (FastAPI, X-API-Key: dev-key)"
+echo "    agent ops API    http://localhost:8003   (/health /ready /metrics /api/status)"
 echo
 wait

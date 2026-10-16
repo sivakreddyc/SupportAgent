@@ -9,9 +9,12 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sqlite3
+import time
 from collections.abc import Iterable
 from contextlib import closing
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal
@@ -148,10 +151,12 @@ def finished_tickets(db_path: str, since: datetime | None = None) -> pd.DataFram
            WHERE t.finished_at IS NOT NULL AND (? IS NULL OR t.finished_at >= ?)""",
         (_iso(since), _iso(since)),
     )
-    if df.empty:
-        return df.assign(e2e_seconds=pd.Series(dtype=float), result=pd.Series(dtype=str))
+    # Convert before the empty check: callers group by these columns, which needs datetime dtype
+    # even when no rows matched.
     df["discovered_at"] = to_ts(df["discovered_at"])
     df["finished_at"] = to_ts(df["finished_at"])
+    if df.empty:
+        return df.assign(e2e_seconds=pd.Series(dtype=float), result=pd.Series(dtype=str))
     df["e2e_seconds"] = (df["finished_at"] - df["discovered_at"]).dt.total_seconds()
 
     def bucket(r) -> str:
@@ -180,11 +185,10 @@ def discovered_times(db_path: str, since: datetime | None = None) -> pd.DataFram
 # --------------------------------------------------------------------------- tickets
 
 
-def tickets(
-    db_path: str, states: Iterable[str] | None = None, search: str | None = None, limit: int = 1000
-) -> pd.DataFrame:
+def _ticket_filter(states: Iterable[str] | None, search: str | None) -> tuple[str, list[Any]]:
     states = list(states or [])
-    clauses, params = [], []
+    clauses: list[str] = []
+    params: list[Any] = []
     if states:
         clauses.append(f"t.state IN ({','.join('?' * len(states))})")
         params += states
@@ -192,7 +196,20 @@ def tickets(
         like = f"%{search.strip()}%"
         clauses.append("(t.ticket_id LIKE ? OR t.subject LIKE ? OR t.customer_email LIKE ?)")
         params += [like, like, like]
-    where = ("WHERE " + " AND ".join(clauses)) if clauses else ""
+    return (("WHERE " + " AND ".join(clauses)) if clauses else ""), params
+
+
+def tickets_count(db_path: str, states: Iterable[str] | None = None, search: str | None = None) -> int:
+    where, params = _ticket_filter(states, search)
+    row = _one(db_path, f"SELECT count(*) AS n FROM tickets t {where}", params)
+    return int(row["n"]) if row else 0
+
+
+def tickets(
+    db_path: str, states: Iterable[str] | None = None, search: str | None = None, limit: int = 100
+) -> pd.DataFrame:
+    """Most recently updated first; `limit` rows (the console loads 100 by default)."""
+    where, params = _ticket_filter(states, search)
     df = query(
         db_path,
         f"""SELECT t.ticket_id, t.subject, t.customer_email, t.state, t.attempt,
@@ -253,6 +270,38 @@ def ticket_detail(db_path: str, ticket_id: str) -> dict[str, Any] | None:
         "drafts": drafts,
         "reviews": reviews,
     }
+
+
+def tickets_for_email(db_path: str, email: str, limit: int = 100) -> pd.DataFrame:
+    df = query(
+        db_path,
+        """SELECT t.ticket_id, t.subject, t.state, COALESCE(p.priority, t.priority) AS priority, p.outcome,
+                  p.reasons_json, t.discovered_at, t.updated_at
+           FROM tickets t LEFT JOIN policy_decisions p ON p.ticket_id = t.ticket_id
+           WHERE lower(t.customer_email) = lower(?) ORDER BY t.updated_at DESC LIMIT ?""",
+        (email.strip(), int(limit)),
+    )
+    df["reasons"] = [", ".join(_loads(v, []) or []) for v in df["reasons_json"]]
+    return df.drop(columns=["reasons_json"])
+
+
+def customer_emails(
+    db_path: str, q: str | None = None, limit: int = 100, offset: int = 0
+) -> tuple[int, pd.DataFrame]:
+    """Distinct customer emails seen on tickets (User Info fallback when the user service can't list)."""
+    where, params = "", []
+    if q and q.strip():
+        where, params = "WHERE customer_email LIKE ?", [f"%{q.strip()}%"]
+    total_row = _one(
+        db_path, f"SELECT count(DISTINCT lower(customer_email)) AS n FROM tickets {where}", params
+    )
+    df = query(
+        db_path,
+        f"""SELECT lower(customer_email) AS email, count(*) AS tickets, max(updated_at) AS last_ticket_at
+            FROM tickets {where} GROUP BY lower(customer_email) ORDER BY email LIMIT ? OFFSET ?""",
+        (*params, int(limit), int(offset)),
+    )
+    return (int(total_row["n"]) if total_row else 0), df
 
 
 # --------------------------------------------------------------------------- review
@@ -382,3 +431,259 @@ def read_log_tail(
             df[col] = None
     df["ts"] = to_ts(df["ts"])
     return df, bad
+
+
+# --------------------------------------------------------------------------- SQL console (read-only)
+
+SQL_TIMEOUT_S = 5.0
+READONLY_PRAGMAS = frozenset(
+    {
+        "table_info",
+        "table_xinfo",
+        "table_list",
+        "index_list",
+        "index_info",
+        "index_xinfo",
+        "foreign_key_list",
+        "database_list",
+        "collation_list",
+        "function_list",
+        "pragma_list",
+        "compile_options",
+        "user_version",
+        "schema_version",
+        "page_count",
+        "page_size",
+        "freelist_count",
+        "journal_mode",
+        "integrity_check",
+        "quick_check",
+        "foreign_key_check",
+        "encoding",
+    }
+)
+_DENY_WORDS = frozenset(
+    {
+        "INSERT",
+        "UPDATE",
+        "DELETE",
+        "UPSERT",
+        "DROP",
+        "ALTER",
+        "CREATE",
+        "ATTACH",
+        "DETACH",
+        "VACUUM",
+        "REINDEX",
+        "ANALYZE",
+        "BEGIN",
+        "COMMIT",
+        "ROLLBACK",
+        "SAVEPOINT",
+        "RELEASE",
+        "LOAD_EXTENSION",
+    }
+)
+_READ_STARTS = frozenset({"SELECT", "WITH", "VALUES"})
+
+
+class SqlGuardError(ValueError):
+    """The statement is not a single read-only query."""
+
+
+class SqlTimeout(RuntimeError):
+    """The query ran longer than the console's time limit."""
+
+
+@dataclass
+class QueryResult:
+    statement: str
+    columns: list[str]
+    types: list[str]
+    rows: list[tuple[Any, ...]]
+    has_more: bool
+    elapsed_ms: float
+
+    def frame(self) -> pd.DataFrame:
+        cols = _dedupe(self.columns)
+        return pd.DataFrame.from_records(self.rows, columns=cols) if cols else pd.DataFrame()
+
+
+def _dedupe(cols: list[str]) -> list[str]:
+    seen: dict[str, int] = {}
+    out = []
+    for c in cols:
+        n = seen.get(c, 0)
+        out.append(c if n == 0 else f"{c}_{n}")
+        seen[c] = n + 1
+    return out
+
+
+def _scan_sql(sql: str) -> tuple[str, str]:
+    """Return (sql without comments, same text with string/identifier contents blanked out).
+
+    The blanked copy is what keyword and ';' checks look at, so words inside literals, quoted
+    identifiers or comments can't fool the guard.
+    """
+    clean: list[str] = []
+    code: list[str] = []
+    i, n = 0, len(sql)
+    closers = {"'": "'", '"': '"', "`": "`", "[": "]"}
+    while i < n:
+        ch = sql[i]
+        if ch == "-" and sql.startswith("--", i):
+            j = sql.find("\n", i)
+            i = n if j < 0 else j
+            continue
+        if ch == "/" and sql.startswith("/*", i):
+            j = sql.find("*/", i + 2)
+            if j < 0:
+                raise SqlGuardError("Unterminated /* comment.")
+            clean.append(" ")
+            code.append(" ")
+            i = j + 2
+            continue
+        if ch in closers:
+            close = closers[ch]
+            j = i + 1
+            while True:
+                k = sql.find(close, j)
+                if k < 0:
+                    raise SqlGuardError("Unterminated quoted string or identifier.")
+                if close in "'\"`" and sql.startswith(close * 2, k):  # doubled quote = escaped
+                    j = k + 2
+                    continue
+                break
+            clean.append(sql[i : k + 1])
+            code.append(ch + " " * (k - i - 1) + close)
+            i = k + 1
+            continue
+        clean.append(ch)
+        code.append(ch)
+        i += 1
+    return "".join(clean), "".join(code)
+
+
+def check_readonly_sql(sql: str) -> str:
+    """Validate a console statement; return it normalised (comments and trailing ';' removed).
+
+    Accepts exactly one SELECT / WITH / VALUES / EXPLAIN [QUERY PLAN] <select> / read-only PRAGMA.
+    The read-only connection (`mode=ro` + `PRAGMA query_only`) is the real safety net; this guard
+    gives clear messages and blocks things `query_only` doesn't (ATTACH, PRAGMA writes, extensions).
+    """
+    clean, code = _scan_sql(sql or "")
+    clean, code = clean.strip(), code.strip()
+    while code.endswith(";"):
+        code, clean = code[:-1].rstrip(), clean[:-1].rstrip()
+    if not code:
+        raise SqlGuardError("Enter a query.")
+    if ";" in code:
+        raise SqlGuardError("Only one statement at a time; remove the extra `;`.")
+    if not sqlite3.complete_statement(clean + ";") or code.count("(") != code.count(")"):
+        raise SqlGuardError("The statement looks incomplete (unbalanced quotes or parentheses?).")
+    words = [w.upper() for w in re.findall(r"[A-Za-z_][A-Za-z_0-9]*", code)]
+    first = words[0]
+    if first == "PRAGMA":
+        m = re.fullmatch(r"PRAGMA\s+(?:\w+\s*\.\s*)?(\w+)\s*(?:\(\s*[^()=;]*\))?", code, re.IGNORECASE)
+        if not m or "=" in code:
+            raise SqlGuardError("Only read-only PRAGMAs are allowed, e.g. `PRAGMA table_info(tickets)`.")
+        if m.group(1).lower() not in READONLY_PRAGMAS:
+            raise SqlGuardError(
+                f"`PRAGMA {m.group(1)}` isn't allowed here. Allowed: {', '.join(sorted(READONLY_PRAGMAS))}."
+            )
+        return clean
+    rest = words
+    if first == "EXPLAIN":
+        rest = words[1:]
+        if rest[:2] == ["QUERY", "PLAN"]:
+            rest = rest[2:]
+        if not rest:
+            raise SqlGuardError("EXPLAIN needs a query after it.")
+    if rest[0] not in _READ_STARTS:
+        raise SqlGuardError(
+            "This console is read-only: only SELECT, WITH, VALUES, EXPLAIN and read-only PRAGMA "
+            f"statements are allowed (got `{words[0]}`)."
+        )
+    banned = sorted(set(words) & _DENY_WORDS)
+    if banned or re.search(r"\bREPLACE\s+INTO\b", code, re.IGNORECASE):
+        raise SqlGuardError(
+            f"This console is read-only: `{(banned or ['REPLACE INTO'])[0]}` is not allowed. "
+            "Review actions live on the Tickets tab."
+        )
+    return clean
+
+
+def _sql_type(v: Any) -> str:
+    if v is None:
+        return "NULL"
+    if isinstance(v, bool | int):
+        return "INTEGER"
+    if isinstance(v, float):
+        return "REAL"
+    if isinstance(v, bytes | bytearray | memoryview):
+        return "BLOB"
+    return "TEXT"
+
+
+def run_readonly_query(
+    db_path: str, sql: str, limit: int = 100, timeout_s: float = SQL_TIMEOUT_S
+) -> QueryResult:
+    """Run one guarded statement on a read-only connection; fetch at most `limit` rows (+1 to detect more)."""
+    stmt = check_readonly_sql(sql)
+    conn = connect_ro(db_path)
+    conn.row_factory = None
+    deadline = time.monotonic() + timeout_s
+    conn.set_progress_handler(lambda: 1 if time.monotonic() > deadline else 0, 5_000)
+    t0 = time.perf_counter()
+    try:
+        cur = conn.execute(stmt)
+        rows = cur.fetchmany(int(limit) + 1)
+        columns = [d[0] for d in cur.description] if cur.description else []
+    except sqlite3.OperationalError as e:
+        if "interrupted" in str(e).lower():
+            raise SqlTimeout(f"Query stopped after {timeout_s:.0f} s. Add a WHERE clause or LIMIT.") from e
+        raise
+    finally:
+        conn.close()
+    elapsed_ms = (time.perf_counter() - t0) * 1000
+    has_more = len(rows) > limit
+    rows = rows[: int(limit)]
+    types = []
+    for i in range(len(columns)):
+        types.append(next((_sql_type(r[i]) for r in rows if r[i] is not None), "NULL"))
+    return QueryResult(stmt, columns, types, rows, has_more, round(elapsed_ms, 2))
+
+
+def schema_overview(db_path: str) -> list[dict[str, Any]]:
+    """Tables (and views) with columns and row counts, for the SQL console's schema browser."""
+    with closing(connect_ro(db_path)) as conn:
+        objs = conn.execute(
+            "SELECT name, type FROM sqlite_master WHERE type IN ('table', 'view') "
+            "AND name NOT LIKE 'sqlite_%' ORDER BY type, name"
+        ).fetchall()
+        out = []
+        for o in objs:
+            name = o["name"]
+            quoted = '"' + name.replace('"', '""') + '"'
+            cols = conn.execute(f"PRAGMA table_info({quoted})").fetchall()
+            try:
+                n = conn.execute(f"SELECT count(*) FROM {quoted}").fetchone()[0]
+            except sqlite3.Error:
+                n = None
+            out.append(
+                {
+                    "name": name,
+                    "type": o["type"],
+                    "rows": n,
+                    "columns": [
+                        {
+                            "name": c["name"],
+                            "type": c["type"] or "",
+                            "pk": bool(c["pk"]),
+                            "notnull": bool(c["notnull"]),
+                        }
+                        for c in cols
+                    ],
+                }
+            )
+        return out

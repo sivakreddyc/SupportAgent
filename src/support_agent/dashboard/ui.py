@@ -38,6 +38,31 @@ TIME_RANGES: dict[str, timedelta | None] = {
 }
 
 
+def db_ready(path: str) -> bool:
+    """Render a friendly empty state (without stopping the script) unless the DB is usable."""
+    status = data.db_status(path)
+    if status == "missing":
+        st.info(
+            f"No database yet at `{path}`.\n\n"
+            "Start the agent runtime (`support-agent run`) and it will create it, "
+            "or point the console at another file with `SA_DB_PATH`.",
+            icon=":material/database:",
+        )
+        return False
+    if status == "uninitialized":
+        st.info(
+            f"`{path}` exists but has no SupportAgent tables yet. Start the runtime once to initialise it.",
+            icon=":material/database:",
+        )
+        return False
+    return True
+
+
+def clear_cache() -> None:
+    """Call after any write so cached reads don't show stale state."""
+    st.cache_data.clear()
+
+
 def require_db() -> str:
     """Return the DB path, or render a friendly empty state and stop the page."""
     path = data.resolve_db_path()

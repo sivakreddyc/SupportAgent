@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+
 import pandas as pd
 import streamlit as st
 
 from support_agent.dashboard import data, ui
-
-st.title("Queue & Workers")
-db = ui.require_db()
-since = ui.time_range("queue_range")
 
 GAUGES = ["queue_depth", "queue_capacity", "workers_busy", "workers_configured"]
 COUNTERS = [
@@ -28,8 +26,7 @@ def _sustained_above(ts: pd.Series, ratio: pd.Series) -> bool:
     return len(recent) >= 3 and bool((recent > SATURATION).all())
 
 
-@st.fragment(run_every=ui.refresh_every())
-def body() -> None:
+def _body(db: str, since: datetime | None) -> None:
     m = data.metric_samples(db, GAUGES + COUNTERS, since)
     if m.empty:
         ui.empty(
@@ -150,4 +147,6 @@ def body() -> None:
             ui.chart(ui.line(j, "ts", "wait", y_title="Seconds (enqueue → dequeue)"))
 
 
-body()
+def render(db: str, since: datetime | None) -> None:
+    """Queue & Workers section (auto-refreshing fragment). Used by the Observability tab."""
+    st.fragment(_body, run_every=ui.refresh_every())(db, since)

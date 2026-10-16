@@ -4,6 +4,9 @@ Run:  support-agent user-service --port 8002   (uvicorn target ``support_agent.m
 Tests: ``create_app(seed=True, latency_ms=None, error_rate=None, api_key=None)``.
 
 Endpoints (all but ``/health`` and the OpenAPI docs need header ``X-API-Key``, default ``dev-key``; 401 otherwise):
+  GET /users?q=&limit=100&offset=0 -> {"total": int, "items": [UserInfo]}  (sorted by user_id; ``q`` is a
+                                   case-insensitive substring of email, name or user_id; limit 1..1000,
+                                   offset >= 0, else 422; ``total`` counts all matches before paging)
   GET /users/by-email/{email}   -> UserInfo        (case-insensitive; 404 if unknown)
   GET /users/{user_id}          -> UserInfo        (404 if unknown)
   GET /users/{user_id}/orders   -> list[Order]     (all orders, newest first; 404 if unknown user)
@@ -30,8 +33,9 @@ import random
 from pathlib import Path
 from typing import Any
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 
 from support_agent.common.models import Order, UserInfo
 
@@ -39,6 +43,13 @@ SEED_FILE = Path(__file__).parent / "seed_users.json"
 DEFAULT_API_KEY = "dev-key"
 OPEN_ORDER_STATUSES = {"pending", "paid", "shipped"}
 CHAOS_EXEMPT = ("/health", "/docs", "/openapi.json", "/redoc")  # prefixes skipped by the chaos middleware
+
+
+class UserPage(BaseModel):
+    """Response of ``GET /users``."""
+
+    total: int
+    items: list[UserInfo]
 
 
 class UserRecord:
@@ -108,6 +119,24 @@ def create_app(
     @app.get("/health")
     async def health() -> dict[str, str]:
         return {"status": "ok"}
+
+    @app.get("/users", response_model=UserPage, dependencies=[Depends(require_key)])
+    async def list_users(
+        q: str | None = None,
+        limit: int = Query(100, ge=1, le=1000),
+        offset: int = Query(0, ge=0),
+    ) -> UserPage:
+        needle = (q or "").strip().lower()
+        rows = sorted(app.state.by_id.values(), key=lambda r: r.info.user_id)
+        if needle:
+            rows = [
+                r
+                for r in rows
+                if needle in r.info.email.lower()
+                or needle in r.info.name.lower()
+                or needle in r.info.user_id.lower()
+            ]
+        return UserPage(total=len(rows), items=[r.info for r in rows[offset : offset + limit]])
 
     @app.get("/users/by-email/{email}", response_model=UserInfo, dependencies=[Depends(require_key)])
     async def user_by_email(email: str) -> UserInfo:

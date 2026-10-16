@@ -13,13 +13,10 @@ import streamlit as st
 
 from support_agent.dashboard import data, ui
 
-st.title("Human Review")
-db = ui.require_db()
-
 ACTION_LABEL = {"approve": "approved", "edit": "edited and approved", "reject": "rejected"}
 
 
-def _apply(ticket_id: str, action: str, text_key: str, draft_body: str) -> None:
+def _apply(db: str, ticket_id: str, action: str, text_key: str, draft_body: str) -> None:
     """Button callback. Reads reviewer + editor text from session state (callback args are bound at
     render time, so text typed just before the click would otherwise be stale)."""
     from support_agent.common.states import InvalidTransition
@@ -61,10 +58,10 @@ def _apply(ticket_id: str, action: str, text_key: str, draft_body: str) -> None:
             + (" The runtime will post the reply shortly." if action != "reject" else ""),
         )
         st.session_state.pop("review_pick", None)
+        ui.clear_cache()
 
 
-@st.fragment(run_every=ui.refresh_every())
-def queue_panel() -> None:
+def _queue_panel(db: str) -> None:
     q = data.pending_reviews(db)
     c = st.columns(3)
     c[0].metric("Pending", len(q), border=True)
@@ -90,137 +87,145 @@ def queue_panel() -> None:
             "waiting_since": st.column_config.DatetimeColumn("Waiting since", format="HH:mm:ss"),
         },
     )
-    if set(q["ticket_id"]) != set(st.session_state.get("review_known_ids", [])):
+    known = st.session_state.get("review_known_ids")
+    if known is not None and set(q["ticket_id"]) != set(known):
         st.caption(":material/sync: The queue changed. Use **Refresh** to update the ticket picker.")
 
 
-flash = st.session_state.pop("review_flash", None)
-if flash:
-    getattr(st, flash[0])(flash[1])
+def _review_body(db: str) -> None:
+    """Reviewer controls. Not auto-refreshed, so typing in the editor is never interrupted."""
+    flash = st.session_state.pop("review_flash", None)
+    if flash:
+        getattr(st, flash[0])(flash[1])
 
-pending = data.pending_reviews(db)
-st.session_state["review_known_ids"] = pending["ticket_id"].tolist()
-queue_panel()
-if pending.empty:
-    st.stop()
+    pending = data.pending_reviews(db)
+    st.session_state["review_known_ids"] = pending["ticket_id"].tolist()
+    if pending.empty:
+        return
 
-top = st.columns([2, 2, 1], vertical_alignment="bottom")
-reviewer = top[0].text_input("Reviewer", key="reviewer_name", placeholder="Your name (required)").strip()
-labels = {
-    r.ticket_id: f"{'🔴 ' if r.priority == 'high' else ''}{r.ticket_id} · {r.subject[:60]}"
-    for r in pending.itertuples()
-}
-ids = list(labels)
-if st.session_state.get("review_pick") not in ids:
-    st.session_state["review_pick"] = ids[0]
-tid = top[1].selectbox("Ticket", ids, format_func=labels.get, key="review_pick")
-top[2].button("Refresh", icon=":material/refresh:", width="stretch")
+    top = st.columns([2, 2, 1], vertical_alignment="bottom")
+    reviewer = top[0].text_input("Reviewer", key="reviewer_name", placeholder="Your name (required)").strip()
+    labels = {
+        r.ticket_id: f"{'🔴 ' if r.priority == 'high' else ''}{r.ticket_id} · {r.subject[:60]}"
+        for r in pending.itertuples()
+    }
+    ids = list(labels)
+    if st.session_state.get("review_pick") not in ids:
+        st.session_state["review_pick"] = ids[0]
+    tid = top[1].selectbox("Ticket", ids, format_func=labels.get, key="review_pick")
+    top[2].button("Refresh", icon=":material/refresh:", width="stretch")
 
-row = pending.set_index("ticket_id").loc[tid]
-detail = data.ticket_detail(db, tid) or {}
-draft_body = row["draft_body"] if isinstance(row["draft_body"], str) else ""
-has_draft = bool(draft_body.strip())
+    row = pending.set_index("ticket_id").loc[tid]
+    detail = data.ticket_detail(db, tid) or {}
+    draft_body = row["draft_body"] if isinstance(row["draft_body"], str) else ""
+    has_draft = bool(draft_body.strip())
 
-st.divider()
-left, right = st.columns([3, 2], gap="large")
-with right:
-    st.markdown("**Why this needs review**")
-    st.pills(
-        "Rules fired",
-        row["reasons"] or ["(none recorded)"],
-        key=f"rv_reasons_{tid}",
-        disabled=True,
-        label_visibility="collapsed",
-    )
-    if row["priority"] == "high":
-        st.caption(":material/priority_high: High priority")
-    snap = detail.get("snapshot")
-    st.markdown(f"**Customer message** · `{row['customer_email']}`")
-    with st.container(border=True, height=260):
-        st.markdown(f"**{row['subject']}**")
-        st.text(snap["body"] if snap else "(ticket body not fetched)")
-        for m in (snap or {}).get("messages") or []:
-            st.caption(f"{m.get('author')} · {m.get('at')}")
-            st.text(m.get("body"))
-    ul = detail.get("user_lookup")
-    if ul and ul.get("found") and ul.get("user"):
-        u = ul["user"]
-        st.caption(
-            f":material/person: {u.get('name')} · {u.get('plan')} · {u.get('account_status')}"
-            + (" · VIP" if u.get("vip") else "")
-            + f" · LTV ${u.get('lifetime_value', 0):,.0f} · {u.get('recent_refunds', 0)} recent refunds"
+    st.divider()
+    left, right = st.columns([3, 2], gap="large")
+    with right:
+        st.markdown("**Why this needs review**")
+        st.pills(
+            "Rules fired",
+            row["reasons"] or ["(none recorded)"],
+            key=f"rv_reasons_{tid}",
+            disabled=True,
+            label_visibility="collapsed",
         )
-    else:
-        st.caption(":material/person_off: No user record for this email")
-    llm = detail.get("llm_calls")
-    if llm is not None and not llm.empty:
-        last = llm.iloc[-1]
-        if isinstance(last["analysis_json"], str):
-            a = json.loads(last["analysis_json"])
+        if row["priority"] == "high":
+            st.caption(":material/priority_high: High priority")
+        snap = detail.get("snapshot")
+        st.markdown(f"**Customer message** · `{row['customer_email']}`")
+        with st.container(border=True, height=260):
+            st.markdown(f"**{row['subject']}**")
+            st.text(snap["body"] if snap else "(ticket body not fetched)")
+            for m in (snap or {}).get("messages") or []:
+                st.caption(f"{m.get('author')} · {m.get('at')}")
+                st.text(m.get("body"))
+        ul = detail.get("user_lookup")
+        if ul and ul.get("found") and ul.get("user"):
+            u = ul["user"]
             st.caption(
-                f":material/psychology: {a['category']} · {a['sentiment']} · urgency {a['urgency']} · "
-                f"confidence {a['confidence']:.2f}"
+                f":material/person: {u.get('name')} · {u.get('plan')} · {u.get('account_status')}"
+                + (" · VIP" if u.get("vip") else "")
+                + f" · LTV ${u.get('lifetime_value', 0):,.0f} · {u.get('recent_refunds', 0)} recent refunds"
             )
-            with st.expander("Model reasoning summary"):
-                st.write(a.get("reasoning_summary"))
-                if a.get("suggested_actions"):
-                    st.markdown("\n".join(f"- {x}" for x in a["suggested_actions"]))
         else:
-            st.caption(f":material/psychology: No usable analysis (stop_reason `{last['stop_reason']}`)")
+            st.caption(":material/person_off: No user record for this email")
+        llm = detail.get("llm_calls")
+        if llm is not None and not llm.empty:
+            last = llm.iloc[-1]
+            if isinstance(last["analysis_json"], str):
+                a = json.loads(last["analysis_json"])
+                st.caption(
+                    f":material/psychology: {a['category']} · {a['sentiment']} · urgency {a['urgency']} · "
+                    f"confidence {a['confidence']:.2f}"
+                )
+                with st.expander("Model reasoning summary"):
+                    st.write(a.get("reasoning_summary"))
+                    if a.get("suggested_actions"):
+                        st.markdown("\n".join(f"- {x}" for x in a["suggested_actions"]))
+            else:
+                st.caption(f":material/psychology: No usable analysis (stop_reason `{last['stop_reason']}`)")
 
-with left:
-    st.markdown("**Draft reply**")
-    if not has_draft:
-        st.info(
-            "There is no usable AI draft for this ticket (the model refused or returned no analysis). "
-            "Write a reply below and use **Edit & Approve**, or **Reject**.",
-            icon=":material/edit_note:",
+    with left:
+        st.markdown("**Draft reply**")
+        if not has_draft:
+            st.info(
+                "There is no usable AI draft for this ticket (the model refused or returned no analysis). "
+                "Write a reply below and use **Edit & Approve**, or **Reject**.",
+                icon=":material/edit_note:",
+            )
+        text_key = f"rv_text_{tid}_{row['draft_id']}"
+        edited = st.text_area(
+            "Draft reply",
+            value=draft_body,
+            height=320,
+            key=text_key,
+            label_visibility="collapsed",
         )
-    text_key = f"rv_text_{tid}_{row['draft_id']}"
-    edited = st.text_area(
-        "Draft reply",
-        value=draft_body,
-        height=320,
-        key=text_key,
-        label_visibility="collapsed",
-    )
-    changed = edited.strip() != draft_body.strip()
-    if changed:
-        st.caption(":material/edit: You changed the draft. Use **Edit & Approve** to send your version.")
-    if not reviewer:
-        st.caption(":material/badge: Enter your name in **Reviewer** above before reviewing.")
-    b = st.columns(3)
-    b[0].button(
-        "Approve",
-        icon=":material/check:",
-        type="primary",
-        disabled=not has_draft,
-        help="Send the AI draft as is" if has_draft else "No draft to approve; use Edit & Approve",
-        on_click=_apply,
-        args=(tid, "approve", text_key, draft_body),
-        key=f"rv_approve_{tid}",
-        width="stretch",
-    )
-    b[1].button(
-        "Edit & Approve",
-        icon=":material/edit:",
-        help="Send the text in the editor (saved as a human-edited draft)",
-        on_click=_apply,
-        args=(tid, "edit", text_key, draft_body),
-        key=f"rv_edit_{tid}",
-        width="stretch",
-    )
-    b[2].button(
-        "Reject",
-        icon=":material/close:",
-        help="Close without sending a reply",
-        on_click=_apply,
-        args=(tid, "reject", text_key, draft_body),
-        key=f"rv_reject_{tid}",
-        width="stretch",
-    )
+        changed = edited.strip() != draft_body.strip()
+        if changed:
+            st.caption(":material/edit: You changed the draft. Use **Edit & Approve** to send your version.")
+        if not reviewer:
+            st.caption(":material/badge: Enter your name in **Reviewer** above before reviewing.")
+        b = st.columns(3)
+        b[0].button(
+            "Approve",
+            icon=":material/check:",
+            type="primary",
+            disabled=not has_draft,
+            help="Send the AI draft as is" if has_draft else "No draft to approve; use Edit & Approve",
+            on_click=_apply,
+            args=(db, tid, "approve", text_key, draft_body),
+            key=f"rv_approve_{tid}",
+            width="stretch",
+        )
+        b[1].button(
+            "Edit & Approve",
+            icon=":material/edit:",
+            help="Send the text in the editor (saved as a human-edited draft)",
+            on_click=_apply,
+            args=(db, tid, "edit", text_key, draft_body),
+            key=f"rv_edit_{tid}",
+            width="stretch",
+        )
+        b[2].button(
+            "Reject",
+            icon=":material/close:",
+            help="Close without sending a reply",
+            on_click=_apply,
+            args=(db, tid, "reject", text_key, draft_body),
+            key=f"rv_reject_{tid}",
+            width="stretch",
+        )
 
-recent = data.recent_reviews(db, 10)
-if not recent.empty:
-    with st.expander("Recent review actions"):
-        st.dataframe(recent, hide_index=True)
+    recent = data.recent_reviews(db, 10)
+    if not recent.empty:
+        with st.expander("Recent review actions"):
+            st.dataframe(recent, hide_index=True)
+
+
+def render(db: str) -> None:
+    """Review queue: auto-refreshing queue panel + a separate, non-refreshing review fragment."""
+    st.fragment(_queue_panel, run_every=ui.refresh_every())(db)
+    st.fragment(_review_body)(db)

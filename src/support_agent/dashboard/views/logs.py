@@ -8,23 +8,17 @@ import streamlit as st
 
 from support_agent.dashboard import data, ui
 
-st.title("Logs")
-log_path = data.resolve_log_path()
 LEVELS = ["debug", "info", "warning", "error", "critical"]
 CORE = ["ts", "level", "component", "event", "ticket_id", "trace_id", "worker_id"]
 
-f = st.columns([1, 2, 2, 2, 3])
-max_lines = f[0].selectbox("Lines", [200, 1000, 5000], index=1, key="logs_lines")
-levels = f[1].multiselect("Level", LEVELS, key="logs_levels", placeholder="All levels")
-_initial, _ = data.read_log_tail(log_path, max_lines=5000)
-_components = sorted(c for c in _initial.get("component", []).dropna().unique()) if not _initial.empty else []
-chosen = f[2].multiselect("Component", _components, key="logs_components", placeholder="All components")
-ticket = f[3].text_input("Ticket id", key="logs_ticket", placeholder="e.g. TCK-1001").strip()
-text = f[4].text_input("Search", key="logs_text", placeholder="Text in event or fields").strip().lower()
 
-
-@st.fragment(run_every=ui.refresh_every())
-def body() -> None:
+def _body(log_path: str) -> None:
+    f = st.columns([1, 2, 2, 2, 3])
+    max_lines = f[0].selectbox("Lines", [200, 1000, 5000], index=1, key="logs_lines")
+    levels = f[1].multiselect("Level", LEVELS, key="logs_levels", placeholder="All levels")
+    comp_box = f[2].empty()
+    ticket = f[3].text_input("Ticket id", key="logs_ticket", placeholder="e.g. TCK-1001").strip()
+    text = f[4].text_input("Search", key="logs_text", placeholder="Text in event or fields").strip().lower()
     df, bad = data.read_log_tail(log_path, max_lines=max_lines)
     if df.empty:
         st.info(
@@ -32,8 +26,19 @@ def body() -> None:
             "(override with `SA_LOG_FILE`).",
             icon=":material/receipt_long:",
         )
+        comp_box.multiselect(
+            "Component",
+            st.session_state.get("logs_components") or [],
+            key="logs_components",
+            placeholder="All components",
+        )
         return
     df["level"] = df["level"].fillna("").astype(str).str.lower()
+    selected = st.session_state.get("logs_components") or []
+    components = sorted({str(c) for c in df["component"].dropna().unique()} | set(selected))
+    chosen = comp_box.multiselect(
+        "Component", components, key="logs_components", placeholder="All components"
+    )
     view = df
     if levels:
         view = view[view["level"].isin(levels)]
@@ -71,4 +76,6 @@ def body() -> None:
     )
 
 
-body()
+def render(log_path: str | None = None) -> None:
+    """Logs section (auto-refreshing fragment, filters included). Used by the Observability tab."""
+    st.fragment(_body, run_every=ui.refresh_every())(log_path or data.resolve_log_path())

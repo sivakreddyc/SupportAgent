@@ -2,19 +2,17 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+
 import pandas as pd
 import streamlit as st
 
 from support_agent.dashboard import data, ui
 
-st.title("LLM")
-db = ui.require_db()
-since = ui.time_range("llm_range")
 RESULTS = ["ok", "refusal", "parse_error", "error"]
 
 
-@st.fragment(run_every=ui.refresh_every())
-def body() -> None:
+def _body(db: str, since: datetime | None) -> None:
     df = data.llm_calls(db, since)
     if df.empty:
         ui.empty("No LLM calls in this time range.")
@@ -117,4 +115,6 @@ def body() -> None:
         st.dataframe(bad[["at", "ticket_id", "model", "result", "stop_reason", "error"]], hide_index=True)
 
 
-body()
+def render(db: str, since: datetime | None) -> None:
+    """LLM section (auto-refreshing fragment). Used by the Observability tab."""
+    st.fragment(_body, run_every=ui.refresh_every())(db, since)

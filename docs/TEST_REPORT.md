@@ -1,28 +1,27 @@
 # SupportAgent — Test Report
 
-_Agent D (QA), 2026-10-16. Spec: [PLAN.md](PLAN.md) §8. Tracker: [TASKS.md](TASKS.md) (D1–D12, "Bugs found")._
+_Agent D (QA), 2026-10-16, updated for Phase 5 (single-page console). Spec: [PLAN.md](PLAN.md) §8. Tracker: [TASKS.md](TASKS.md) (D1–D12, "Bugs found")._
 
 ## Result
 
 ```
 .venv/bin/pytest -q -m "not live"
-880 passed, 1 deselected in 249.11s (0:04:09)   # rerun by lead after the BUG-3 fix
+1010 passed, 1 deselected in 254.58s (0:04:14)
 ```
 
-- **Failures: 0.** No tests are skipped: every builder module has landed and is tested for real.
-- **0 xfailed:** BUG-3 has since been fixed by the lead, and its regression test passes.
+- **Failures: 0. Skips: 0. Xfails: 0.** Every builder module has landed and is tested for real. All three bugs found are fixed, and their regression tests pass.
 - **1 deselected:** the optional live Anthropic test. It skips cleanly without `ANTHROPIC_API_KEY`.
 - **Lint:** `ruff check tests` and `ruff format --check tests` are clean.
 - **Ports:** every server under test binds an ephemeral port. 8001/8002/8003/8501 are never bound, so the suite runs alongside a live stack.
-- **Flakiness:** the timing-sensitive files (sampler, scheduler, portal chaos, BUG-1 regression) were each run 2–3× with no flakes.
+- **Flakiness:** the timing-sensitive files (sampler, scheduler, portal chaos, BUG-1 regression) were each run 2–3× with no flakes, and the full suite gave identical results on two consecutive runs.
 
 Markers (registered in `pyproject.toml`): `browser` (Playwright Chromium), `e2e` (full stack), `load`, `live`.
 Faster loop without the load/chaos runs: `pytest -m "not live and not load"`.
 
 | Level | Files | Tests | Status |
 |---|---|---|---|
-| Unit | `tests/unit/` (13 files) | 713 | 712 pass + 1 xfail |
-| Integration | `tests/integration/` (5 files + `conftest.py`) | 161 | all pass |
+| Unit | `tests/unit/` (14 files) | 788 | all pass |
+| Integration | `tests/integration/` (5 files + `conftest.py`) | 216 | all pass |
 | E2E | `tests/e2e/test_full_stack.py` (+ live) | 2 (+1) | pass (live deselected) |
 | Load / chaos | `tests/load/` | 4 | all pass |
 
@@ -57,16 +56,17 @@ Faster loop without the load/chaos runs: `pytest -m "not live and not load"`.
 | `test_repository.py` | pragmas, upsert dedup, every transition logged in order, illegal/missing → no writes, concurrency (one winner; 200 concurrent upserts), error/attempt/finished_at, all step records, FK enforcement, idempotent drafts, review queries, extras, spans/metric samples/scheduler_runs, WAL reader |
 | `test_review.py` | `apply_review` approve/edit/reject, bad input and wrong state are atomic, double review rejected, `requeue_dead_letter` resets attempt |
 | `test_scheduler.py` | fire-on-start, interval, jitter bounds/determinism, overlap guard + `scheduler_skipped_total`, errors keep the loop alive, `last_run_at` only advances on successful runs, stop waits then cancels, restart |
+| `test_sql_guard.py` | Phase 5 SQL console data layer. **38 rejected statements:** UPDATE / DELETE / DROP / ALTER / CREATE / INSERT / REPLACE INTO / ATTACH / DETACH / VACUUM [INTO] / REINDEX / BEGIN, multiple statements, `WITH … DELETE/UPDATE/INSERT`, `PRAGMA query_only=OFF` and other PRAGMA writes or non-allow-listed PRAGMAs, `;` hidden in comments and string literals, `load_extension`, `EXPLAIN DELETE`, empty or incomplete statements. **20 accepted:** SELECT, WITH, VALUES, EXPLAIN [QUERY PLAN], allow-listed PRAGMAs, keywords inside literals and comments, `replace()`, `updated_at`/`created_at` columns. Also: 100-row default + `has_more`; column types; DB byte-identical after rejected writes; **guard bypassed → the read-only connection still refuses every write**; timeout → `SqlTimeout`; a missing DB is never created; `schema_overview` |
 | `test_user_client.py` | scripted ephemeral server: API key, 404 → None (no retry), 5xx retried, 4xx not, connect error, timeout + recovery, TTL cache, errors not cached, URL-encoding, metrics; respx 5xx/timeout |
 
-### Integration (D5, D6, D10)
+### Integration (D5, D6, D10 / U6)
 | File | Covers |
 |---|---|
 | `test_portal.py` (`browser`) | Playwright against the real mock UI: lifecycle; bad credentials; all 53 seeds across pages (sizes 20 and 7) + 173 after `/admin/generate`; exact `get_ticket`; `post_draft` idempotent (repeat, 6 concurrent, across a portal restart), visible in raw HTML; notes; status; small page pool; **re-login** after cookies are cleared and after the server rotates its secret; persistent 500 → `PortalError` + png/html artifacts; transient 500s retried; BUG-1 regression (exactly N failed `POST /login`); drafts under 30% chaos not duplicated; spans + `browser_ops_total` |
-| `test_user_service.py` | mock user service API: auth, every seed user matches its profile, unknown → 404, orders, chaos knobs; real `HttpUserInfoClient` against it |
+| `test_user_service.py` | mock user service API: auth, every seed user matches its profile, unknown → 404, orders, chaos knobs; real `HttpUserInfoClient` against it. **Phase 5 `GET /users`:** default page (50 users, limit 100, sorted by id), key required, limit/offset pagination, 422 on bad params, case-insensitive `q` on email/name/id, chaos applies. `HttpUserInfoClient.list_users`: pages, search, 422 → `UserServiceError`, service down, not cached |
 | `test_pipeline.py` | poller dedup, transition-before-enqueue invariant, **backpressure** (stays DISCOVERED, rejections counted, picked up next poll; 40 tickets through queue 5 with nothing lost); **happy path → DONE with one draft** and every step row and span; **each of the 13 rules → NEEDS_REVIEW + "Escalated" note** (real gate); **retry → DEAD_LETTER after max_retries** (LLM, portal fetch, user service, post); **non-retryable → DLQ immediately**; timeout; poison ticket isolated; no double-post on retry (BUG-2 regression); **crash recovery** (crash mid-LLM, then `Runtime` restart → DONE once each; every recoverable state re-enqueued, NEEDS_REVIEW untouched) |
 | `test_review_flow.py` | `apply_review` + `ReviewDispatcher`: approve / edit / reject, metrics, idempotent second pass, post failure → retry → DONE, persistent → DLQ, failure after post doesn't double-post, background loop, DLQ requeue → workers → DONE |
-| `test_dashboard.py` | `AppTest`: DB seeded by the real pipeline; all 7 pages render (and with a missing DB); Approve / Edit & Approve / Reject write `review_actions`; reviewer name required; DLQ Requeue |
+| `test_dashboard.py` | **Single-page console** via `AppTest`, with tabs picked through `session_state`. The DB is seeded by the real pipeline with 204 tickets. **Rendering:** all 9 views (5 Observability sections, All tickets, Review queue, User Info, SQL) × seeded / empty / missing DB, 0 exceptions; a missing DB shows "No database" and is never created. Also the default tab, header counts, log lines and every time range. **Tickets:** 100 rows by default, Load more → 200 → 204, page size, state + search filters, DLQ requeue. Review queue approve / edit / reject write the right rows; reviewer name required. **SQL:** 100 rows + "more available", Load next → 200 → 204, page size, every example runs, 7 write attempts rejected with the DB file byte-identical, SQL errors shown, timeout gives a friendly warning. **User Info** (service on an ephemeral port): look up by email and by id, unknown-user warning, browse list (50 of 50, no Load more), search. Service down → DB fallback list, and an error on lookup; no DB and service down → error |
 
 ### End to end, load, chaos (D7–D9, D11)
 - **E2E (`test_full_stack.py`).** Mock UI and user service run on ephemeral ports, with the real `Runtime` and nothing injected.
@@ -90,16 +90,17 @@ Faster loop without the load/chaos runs: `pytest -m "not live and not load"`.
 |---|---|---|---|
 | BUG-1 | A | `_login()` treated a 5xx on `POST /login` as bad credentials and never retried, so anything needing a (re)login failed permanently under chaos | ✅ fixed by A; deterministic regression tests pass |
 | BUG-2 | B | Draft idempotency key = `hash(draft body)`, so a retry after a failure that followed a successful post re-ran the LLM. A non-deterministic LLM then produced a different draft, which got a new key, and the customer received two replies (MockLLM hid it) | ✅ fixed by B; regression test passes |
-| BUG-3 | C | A non-numeric `confidence_threshold` in policy.yaml raises a bare `ValueError` instead of `PolicyConfigError` | ✅ fixed by lead (`policy/gate.py::_number`); xfail removed |
+| BUG-3 | C | A non-numeric `confidence_threshold` in policy.yaml raised a bare `ValueError` instead of `PolicyConfigError` | ✅ fixed by the lead (`policy/gate.py::_number`); regression test passes |
 
 Details and repro test ids are in TASKS.md → "Bugs found".
 
 ## Observations (not bugs)
 - The mock UI stores browser-submitted drafts with CRLF line breaks (textarea form semantics). The rendered HTML and `get_ticket` show LF. The E2E test normalises them.
 - At 20–30% UI chaos, a single portal op can exhaust its 3 attempts. Worker-level retries recover, so chaos tests use `max_retries=6` and assert eventual success, not zero portal errors.
+- Phase 5 console: with the user service down but a DB present, User Info quietly falls back to customer emails from tickets (a caption, no error). The error appears on a lookup, or when there is also no DB. The Logs section renders without a DB. Both are by design, and the tests assert them.
+- `app.py` reads the `lru_cache`d `get_settings()`, and AppTest runs the script in-process, so the console fixture clears that cache per test. Production is unaffected (one env per process).
 - The installed `anthropic` SDK (1.15) is built on `httpx2`, so respx cannot intercept it. Use `httpx2.MockTransport`. The user client is plain `httpx`, so respx works there.
 
 ## Pending
 - **D11 live run:** needs an `ANTHROPIC_API_KEY`. Run `ANTHROPIC_API_KEY=... .venv/bin/pytest -m live`.
-- **BUG-3:** fixed by the lead after this report was written. The regression test now passes.
 - Nothing else is blocked.

@@ -2,18 +2,15 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+
 import pandas as pd
 import streamlit as st
 
 from support_agent.dashboard import data, ui
 
-st.title("Overview")
-db = ui.require_db()
-since = ui.time_range("overview_range")
 
-
-@st.fragment(run_every=ui.refresh_every())
-def body() -> None:
+def _body(db: str, since: datetime | None) -> None:
     k = data.kpis(db)
     c = st.columns(6)
     c[0].metric("Discovered", ui.fmt_num(k["discovered"]), border=True)
@@ -101,4 +98,6 @@ def body() -> None:
     )
 
 
-body()
+def render(db: str, since: datetime | None) -> None:
+    """Overview section (auto-refreshing fragment). Used by the Observability tab."""
+    st.fragment(_body, run_every=ui.refresh_every())(db, since)

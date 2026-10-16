@@ -144,3 +144,83 @@ async def test_client_with_chaos(settings, start_user_service):
             await c.get_user_by_email(KNOWN[0].ticket.customer_email)
     finally:
         await c.close()
+
+
+# --------------------------------------------------------------------------- GET /users (Phase 5 U1)
+
+
+def test_list_users_default_page(svc):
+    r = svc.get("/users", headers=KEY)
+    assert r.status_code == 200
+    body = r.json()
+    assert body["total"] == 50 and len(body["items"]) == 50  # default limit 100 > 50 users
+    ids = [u["user_id"] for u in body["items"]]
+    assert ids == sorted(ids)
+    UserInfo(**body["items"][0])
+    assert {u["email"].lower() for u in body["items"]} == {c.ticket.customer_email.lower() for c in KNOWN}
+
+
+def test_list_users_requires_key(svc):
+    assert svc.get("/users").status_code == 401
+
+
+def test_list_users_pagination(svc):
+    first = svc.get("/users", params={"limit": 20, "offset": 0}, headers=KEY).json()
+    second = svc.get("/users", params={"limit": 20, "offset": 20}, headers=KEY).json()
+    tail = svc.get("/users", params={"limit": 20, "offset": 40}, headers=KEY).json()
+    past = svc.get("/users", params={"limit": 20, "offset": 500}, headers=KEY).json()
+    assert first["total"] == second["total"] == 50
+    assert len(first["items"]) == len(second["items"]) == 20 and len(tail["items"]) == 10
+    assert past["items"] == [] and past["total"] == 50
+    all_ids = [u["user_id"] for p in (first, second, tail) for u in p["items"]]
+    assert len(set(all_ids)) == 50
+
+
+@pytest.mark.parametrize("params", [{"limit": 0}, {"limit": 1001}, {"offset": -1}, {"limit": "x"}])
+def test_list_users_bad_params_422(svc, params):
+    assert svc.get("/users", params=params, headers=KEY).status_code == 422
+
+
+def test_list_users_search(svc):
+    u = UserInfo(**svc.get(f"/users/by-email/{KNOWN[0].ticket.customer_email}", headers=KEY).json())
+    for q in (u.email.upper(), u.name.split()[0].lower(), u.user_id.lower()):
+        body = svc.get("/users", params={"q": q}, headers=KEY).json()
+        assert u.user_id in [x["user_id"] for x in body["items"]], q
+        assert body["total"] == len(body["items"])
+    assert svc.get("/users", params={"q": "zz-no-such-user"}, headers=KEY).json() == {"total": 0, "items": []}
+
+
+def test_list_users_chaos_applies(start_user_service):
+    srv = start_user_service(error_rate=1.0)
+    with httpx.Client(base_url=srv.url) as c:
+        assert c.get("/users", headers=KEY).status_code == 500
+
+
+async def test_client_list_users(client):
+    total, items = await client.list_users()
+    assert total == 50 and len(items) == 50 and all(isinstance(u, UserInfo) for u in items)
+    total, page = await client.list_users(limit=10, offset=45)
+    assert total == 50 and len(page) == 5
+    total, found = await client.list_users(q=KNOWN[0].ticket.customer_email)
+    assert total == 1 and found[0].email.lower() == KNOWN[0].ticket.customer_email.lower()
+
+
+async def test_client_list_users_errors(client, settings):
+    with pytest.raises(UserServiceError):
+        await client.list_users(limit=0)  # 422
+    HttpUserInfoClient = require("support_agent.clients.user_info", "HttpUserInfoClient")
+    down = HttpUserInfoClient(
+        settings.model_copy(update={"user_service_url": "http://127.0.0.1:1"}), retries=0
+    )
+    try:
+        with pytest.raises(UserServiceError):
+            await down.list_users()
+    finally:
+        await down.close()
+
+
+async def test_client_list_users_not_cached(client, user_service):
+    await client.list_users()
+    user_service.app.state.error_rate = 1.0
+    with pytest.raises(UserServiceError):
+        await client.list_users()

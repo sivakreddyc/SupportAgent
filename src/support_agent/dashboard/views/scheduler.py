@@ -2,16 +2,13 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from pathlib import Path
 
 import streamlit as st
 
 from support_agent.common.config import PROJECT_ROOT, get_settings
 from support_agent.dashboard import data, ui
-
-st.title("Scheduler & Poller")
-db = ui.require_db()
-since = ui.time_range("sched_range")
 
 
 def _artifacts(limit: int = 5) -> list[Path]:
@@ -24,8 +21,7 @@ def _artifacts(limit: int = 5) -> list[Path]:
     return sorted(files, key=lambda p: p.stat().st_mtime, reverse=True)[:limit]
 
 
-@st.fragment(run_every=ui.refresh_every())
-def body() -> None:
+def _body(db: str, since: datetime | None) -> None:
     runs = data.scheduler_runs(db, since)
     ops = data.metric_samples(db, ["browser_ops_total", "scheduler_skipped_total"], since)
 
@@ -141,4 +137,6 @@ def body() -> None:
         )
 
 
-body()
+def render(db: str, since: datetime | None) -> None:
+    """Scheduler & Poller section (auto-refreshing fragment). Used by the Observability tab."""
+    st.fragment(_body, run_every=ui.refresh_every())(db, since)

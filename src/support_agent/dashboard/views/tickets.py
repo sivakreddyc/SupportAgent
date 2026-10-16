@@ -1,4 +1,5 @@
-"""Tickets: filter/search, then per-ticket timeline, spans, text, user, LLM JSON, policy, drafts."""
+"""Tickets tab: ticket list (100 rows by default) + per-ticket detail (timeline, spans, text, user,
+LLM JSON, policy, drafts), DLQ requeue, and the Review queue sub-tab (views/review.py)."""
 
 from __future__ import annotations
 
@@ -10,9 +11,6 @@ import streamlit as st
 
 from support_agent.dashboard import data, ui
 
-st.title("Tickets")
-db = ui.require_db()
-
 STATE_ICON = {
     "DONE": ":material/check_circle:",
     "DRAFT_POSTED": ":material/send:",
@@ -23,15 +21,10 @@ STATE_ICON = {
     "DEAD_LETTER": ":material/dangerous:",
 }
 
-f1, f2 = st.columns([2, 3])
-states = f1.multiselect("State", data.ALL_STATES, key="tickets_states", placeholder="All states")
-search = f2.text_input("Search", key="tickets_search", placeholder="Ticket id, subject or customer email")
-
-if "ticket" in st.query_params and "tickets_selected" not in st.session_state:
-    st.session_state["tickets_selected"] = st.query_params["ticket"]
+PAGE_SIZES = [100, 500, 1000, 5000]
 
 
-def _requeue(ticket_id: str) -> None:
+def _requeue(db: str, ticket_id: str) -> None:
     from support_agent.common.states import InvalidTransition
     from support_agent.storage.review import ReviewError, TicketNotFound, requeue_dead_letter
 
@@ -48,9 +41,10 @@ def _requeue(ticket_id: str) -> None:
             "success",
             f"{ticket_id} requeued. The runtime will pick it up shortly.",
         )
+        ui.clear_cache()
 
 
-def _detail(ticket_id: str) -> None:
+def _detail(db: str, ticket_id: str) -> None:
     d = data.ticket_detail(db, ticket_id)
     if d is None:
         st.warning(f"Ticket `{ticket_id}` not found.")
@@ -74,11 +68,13 @@ def _detail(ticket_id: str) -> None:
             type="primary",
             key=f"requeue_{ticket_id}",
             on_click=_requeue,
-            args=(ticket_id,),
+            args=(db, ticket_id),
             help="Move back to QUEUED with attempts reset; the runtime re-processes it.",
         )
 
-    tabs = st.tabs(["Timeline", "Ticket text", "Customer", "LLM", "Policy & drafts"])
+    tabs = st.tabs(
+        ["Timeline", "Ticket text", "Customer", "LLM", "Policy & drafts"], key=f"detail_tabs_{ticket_id}"
+    )
     with tabs[0]:
         tr = d["transitions"]
         if tr.empty:
@@ -195,16 +191,47 @@ def _detail(ticket_id: str) -> None:
             st.dataframe(d["reviews"], hide_index=True)
 
 
-@st.fragment(run_every=ui.refresh_every())
-def body() -> None:
+def _reset_shown() -> None:
+    st.session_state["tickets_shown"] = st.session_state.get("tickets_page_size", PAGE_SIZES[0])
+
+
+def _load_more() -> None:
+    size = st.session_state.get("tickets_page_size", PAGE_SIZES[0])
+    st.session_state["tickets_shown"] = st.session_state.get("tickets_shown", size) + size
+
+
+def _list_body(db: str) -> None:
+    f = st.columns([2, 3, 1], vertical_alignment="bottom")
+    states = f[0].multiselect(
+        "State", data.ALL_STATES, key="tickets_states", placeholder="All states", on_change=_reset_shown
+    )
+    search = f[1].text_input(
+        "Search",
+        key="tickets_search",
+        placeholder="Ticket id, subject or customer email",
+        on_change=_reset_shown,
+    )
+    size = f[2].selectbox("Rows", PAGE_SIZES, key="tickets_page_size", on_change=_reset_shown)
+    shown = max(int(st.session_state.get("tickets_shown", size)), size)
+
     flash = st.session_state.pop("tickets_flash", None)
     if flash:
         getattr(st, flash[0])(flash[1])
-    df = data.tickets(db, states, search)
+    total = data.tickets_count(db, states, search)
+    df = data.tickets(db, states, search, limit=shown)
     if df.empty:
         ui.empty("No tickets match these filters." if (states or search) else "No tickets yet.")
         return
-    st.caption(f"{len(df)} ticket(s), most recently updated first")
+    more = total > len(df)
+    cap = st.columns([4, 1], vertical_alignment="center")
+    cap[0].caption(
+        f"Showing {len(df)} of {total} ticket(s), most recently updated first"
+        + (" · more available" if more else "")
+    )
+    if more:
+        cap[1].button(
+            f"Load {size} more", icon=":material/expand_more:", on_click=_load_more, key="tickets_more"
+        )
     event = st.dataframe(
         df,
         hide_index=True,
@@ -229,24 +256,39 @@ def body() -> None:
             "reasons": "Policy reasons",
         },
     )
-    rows = getattr(getattr(event, "selection", None), "rows", None) or []
     ids = df["ticket_id"].tolist()
-    if rows:
-        st.session_state["tickets_selected"] = ids[rows[0]]
-    current = st.session_state.get("tickets_selected")
-    options = ids if current in ids or current is None else [current, *ids]
+    # Apply a table click only when the selection itself changes, so an auto-refresh that shifts rows
+    # never silently switches the open ticket. The picker is set before it renders.
+    rows = tuple(getattr(getattr(event, "selection", None), "rows", None) or [])
+    if rows != st.session_state.get("tickets_last_sel", ()):
+        st.session_state["tickets_last_sel"] = rows
+        if rows and rows[0] < len(ids):
+            st.session_state["tickets_pick"] = ids[rows[0]]
+    if "tickets_pick" not in st.session_state and st.query_params.get("ticket"):
+        st.session_state["tickets_pick"] = st.query_params["ticket"]
+    current = st.session_state.get("tickets_pick")
+    options = ids if current is None or current in ids else [current, *ids]
     selected = st.selectbox(
         "Open ticket",
         options,
-        index=options.index(current) if current in options else None,
+        index=None,
         placeholder="Select a row above or pick a ticket id",
         key="tickets_pick",
     )
     if selected:
-        st.session_state["tickets_selected"] = selected
         st.query_params["ticket"] = selected
         st.divider()
-        _detail(selected)
+        _detail(db, selected)
 
 
-body()
+def render(db: str) -> None:
+    """Tickets tab: "All tickets" (auto-refreshing list + detail) and "Review queue" sub-tabs (lazy)."""
+    from support_agent.dashboard.views import review
+
+    all_tab, review_tab = st.tabs(["All tickets", "Review queue"], key="tickets_section", on_change="rerun")
+    with all_tab:
+        if all_tab.open:
+            st.fragment(_list_body, run_every=ui.refresh_every())(db)
+    with review_tab:
+        if review_tab.open:
+            review.render(db)

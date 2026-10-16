@@ -46,16 +46,25 @@ uv pip install -e '.[dev]'
 scripts/run_all.sh          # starts all four processes; Ctrl-C stops them
 ```
 
-| Service | URL |
+**Open the console: http://localhost:8501.** It's the only page you need, with four tabs:
+
+| Tab | What it's for |
 |---|---|
-| Mock ticket UI (login `agent` / `agent`) | http://localhost:8001 |
-| Mock User Info Service (OpenAPI docs) | http://localhost:8002/docs |
-| Ops API: health, readiness, Prometheus metrics, status | http://localhost:8003/metrics |
-| Ops dashboard (Streamlit) | http://localhost:8501 |
+| **Observability** | KPIs, throughput, end-to-end latency, queue and workers, LLM calls and tokens, scheduler and poller runs, and the JSON log tail |
+| **Tickets** | every ticket (100 rows by default, then *Load more*), each ticket's timeline, spans, LLM output, policy reasons and drafts; the **Review queue** sub-tab to approve, edit or reject escalated drafts; requeue dead-letter tickets |
+| **User Info** | look up a customer by email or user id (profile, plan, status, VIP, orders, their tickets), or browse all users (100 by default) |
+| **SQL** | read-only SQL console on the agent's SQLite DB: first 100 rows by default, *Load next 100*, schema browser, example queries, CSV download |
+
+The other processes run in the background, and you don't need to open them: the mock ticket UI on :8001 (the "external"
+portal the agent reads through Playwright; login `agent` / `agent`), the User Info Service on :8002
+(`X-API-Key: dev-key`), and the agent's ops API on :8003 (`/health`, `/ready`, `/metrics`, `/api/status`).
 
 With the default settings, the 53 seed tickets settle within a few seconds: 19 drafts are posted and 34 tickets
-wait in **Human Review**. To push more load, use **Generate** on the ticket list page (or
-`curl -X POST -d n=500 localhost:8001/admin/generate`).
+wait in **Tickets → Review queue**. To push more load, use **Generate** on the mock ticket UI
+(or `curl -X POST -d n=500 localhost:8001/admin/generate`).
+
+> The mock ticket UI keeps its tickets in memory, while the agent's DB persists in `data/`. For a clean start,
+> stop the stack and move or delete `data/` and `logs/`.
 
 You can also run each process on its own: `support-agent ticket-ui | user-service | run | dashboard`.
 
@@ -98,6 +107,14 @@ environment variable (precedence: env > YAML > built-in default).
 
 Policy rules, thresholds, keywords and unsafe-draft patterns are in [config/policy.yaml](config/policy.yaml).
 
+## Querying the database
+
+Use the **SQL** tab. It's read-only by design: it accepts one `SELECT` / `WITH` / `EXPLAIN` / read-only `PRAGMA`
+statement at a time, runs it on a `mode=ro` + `query_only` connection with a 5 s timeout, and loads 100 rows at a time.
+Writes are blocked because ticket state must only change through the state machine. Approve or reject drafts in
+**Tickets → Review queue**. For ad-hoc access outside the console:
+`sqlite3 -readonly data/support_agent.db`.
+
 ## Policy gate
 
 If any rule fires, the ticket goes to human review. Rules marked high priority sort first in the review queue.
@@ -129,8 +146,7 @@ Keyword checks run on the raw ticket text as well as on the LLM's flags, so the 
   - scheduler ticks, and per-step and end-to-end latency.
 - **Tracing:** one trace id per ticket; every pipeline step is a span stored in the `spans` table.
 - **Logs:** structured JSON with `trace_id`, `ticket_id` and `worker_id` bound.
-- **Dashboard pages:** Overview, Tickets (timeline and spans per ticket), Human Review, Queue & Workers, LLM,
-  Scheduler & Poller, Logs.
+- **Console:** one page at :8501 with the tabs Observability, Tickets (with the Review queue), User Info and SQL.
 
 ## Tests
 
@@ -161,7 +177,7 @@ src/support_agent/
   policy/               rule-based policy gate
   observability/        JSON logging, Prometheus metrics, tracing, metric sampler
   ops_api/              /health /ready /metrics /api/status
-  dashboard/            Streamlit app
+  dashboard/            Streamlit console (one page, tabs: Observability / Tickets / User Info / SQL)
 tests/                  unit / integration / e2e / load
 docs/                   PLAN.md, TASKS.md, TEST_REPORT.md
 ```

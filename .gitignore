@@ -10,3 +10,5 @@ artifacts/
 *.db-wal
 *.db-shm
 .env
+data.bak-*/
+logs.bak-*/
