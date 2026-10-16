@@ -1,0 +1,36 @@
+# Policy gate rules (docs/PLAN.md §5.10). Any rule firing -> human_review. No rule -> auto_approve.
+# Each rule: enabled (default true) and priority (normal|high, default normal). Any fired high-priority
+# rule makes the decision priority "high". Keyword lists match whole words/phrases, case-insensitively,
+# over the ticket subject, body and every message in the thread.
+confidence_threshold: 0.75
+high_value_refund_amount: 100
+
+keywords:
+  legal: [lawyer, attorney, lawsuit, sue, suing, legal action, court, gdpr, data subject request, subpoena, small claims]
+  security: [breach, hacked, hack, compromised, unauthorized access, password leak, leaked, phishing, 2fa bypass, account takeover, stolen]
+  refund: [refund, chargeback, money back, reimburse]
+
+unsafe_draft_patterns:
+  - '\b(?:\d[ -]*?){13,16}\b'                 # card-number-like digit runs
+  - '(?i)\bwe (?:will|have) refund'           # promising refunds
+  - '(?i)\bguarantee'                          # guarantees
+  - '(?i)\blegal(?:ly)? (?:binding|advice)'
+
+# UNSAFE_DRAFT also fires when the draft contains an email address other than the customer's own,
+# unless it belongs to one of these company domains.
+allowed_draft_email_domains: [acme.example]
+
+rules:
+  LOW_CONFIDENCE: {enabled: true}
+  REFUND: {enabled: true}
+  REFUND_HIGH_VALUE: {enabled: true, priority: high}
+  LEGAL: {enabled: true, priority: high}
+  SECURITY: {enabled: true, priority: high}
+  ANGRY: {enabled: true}
+  CRITICAL_URGENCY: {enabled: true, priority: high}
+  VIP: {enabled: true}
+  UNKNOWN_USER: {enabled: true}
+  ACCOUNT_NOT_ACTIVE: {enabled: true}
+  UNSAFE_DRAFT: {enabled: true, priority: high}
+  LLM_REFUSAL: {enabled: true}
+  LLM_NO_ANALYSIS: {enabled: true}

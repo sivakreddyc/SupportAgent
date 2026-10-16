@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Helpdesk{% endblock %} · Mock Ticket UI</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; background: #f6f7f9; color: #1d2330; }
+  header { background: #22304a; color: #fff; padding: 10px 20px; display: flex; gap: 16px; align-items: center; }
+  header a { color: #fff; text-decoration: none; }
+  header form { margin-left: auto; }
+  main { max-width: 1100px; margin: 20px auto; padding: 0 16px; }
+  table { width: 100%; border-collapse: collapse; background: #fff; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e3e6eb; vertical-align: top; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; background: #dde3ec; }
+  .badge.open { background: #d6f0dc; } .badge.pending { background: #fbeec8; }
+  .badge.escalated { background: #f8d4d4; } .badge.closed { background: #e0e0e0; }
+  .card { background: #fff; border: 1px solid #e3e6eb; border-radius: 6px; padding: 12px 16px; margin: 12px 0; }
+  .pre { white-space: pre-wrap; }
+  .muted { color: #6b7385; font-size: 13px; }
+  textarea { width: 100%; min-height: 110px; font: inherit; }
+  .error { color: #a40000; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/tickets" data-testid="nav-tickets"><strong>Helpdesk</strong></a>
+  <a href="/tickets?status=open" data-testid="nav-open-tickets">Open tickets</a>
+  {% if user %}
+  <span class="muted" data-testid="current-user">{{ user }}</span>
+  <form method="post" action="/logout"><button type="submit" data-testid="logout">Log out</button></form>
+  {% endif %}
+</header>
+<main>
+{% block content %}{% endblock %}
+</main>
+</body>
+</html>

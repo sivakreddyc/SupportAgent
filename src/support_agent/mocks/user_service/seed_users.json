@@ -1,0 +1,1191 @@
+[
+  {
+    "user_id": "U-1001",
+    "email": "maria.gonzalez@example.com",
+    "name": "Maria Gonzalez",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2021-08-17",
+    "lifetime_value": 87.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-00101",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-14T08:00:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1002",
+    "email": "dev.patel@example.com",
+    "name": "Dev Patel",
+    "plan": "free",
+    "account_status": "active",
+    "signup_date": "2022-04-03",
+    "lifetime_value": 0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": []
+  },
+  {
+    "user_id": "U-1003",
+    "email": "hannah.schmidt@example.org",
+    "name": "Hannah Schmidt",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2021-07-29",
+    "lifetime_value": 435.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-00301",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-14T09:34:00+00:00"
+      },
+      {
+        "order_id": "ORD-00302",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-15T09:34:00+00:00"
+      },
+      {
+        "order_id": "ORD-00303",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-07-16T09:34:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1004",
+    "email": "tom.becker@example.net",
+    "name": "Tom Becker",
+    "plan": "free",
+    "account_status": "active",
+    "signup_date": "2024-04-24",
+    "lifetime_value": 0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": []
+  },
+  {
+    "user_id": "U-1005",
+    "email": "aiko.tanaka@example.com",
+    "name": "Aiko Tanaka",
+    "plan": "free",
+    "account_status": "active",
+    "signup_date": "2021-03-03",
+    "lifetime_value": 0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": []
+  },
+  {
+    "user_id": "U-1006",
+    "email": "lucas.martin@example.org",
+    "name": "Lucas Martin",
+    "plan": "free",
+    "account_status": "active",
+    "signup_date": "2022-04-22",
+    "lifetime_value": 0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": []
+  },
+  {
+    "user_id": "U-1007",
+    "email": "priya.raman@example.com",
+    "name": "Priya Raman",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2021-02-24",
+    "lifetime_value": 116.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-00701",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-14T12:42:00+00:00"
+      },
+      {
+        "order_id": "ORD-00702",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-15T12:42:00+00:00"
+      },
+      {
+        "order_id": "ORD-00703",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-07-16T12:42:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1008",
+    "email": "owen.brooks@example.net",
+    "name": "Owen Brooks",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2024-08-23",
+    "lifetime_value": 435.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-00801",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-14T13:29:00+00:00"
+      },
+      {
+        "order_id": "ORD-00802",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-15T13:29:00+00:00"
+      },
+      {
+        "order_id": "ORD-00803",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-07-16T13:29:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1009",
+    "email": "fatima.zahra@example.org",
+    "name": "Fatima Zahra",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2022-03-28",
+    "lifetime_value": 406.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-00901",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-14T14:16:00+00:00"
+      },
+      {
+        "order_id": "ORD-00902",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-15T14:16:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1010",
+    "email": "ben.carter@example.com",
+    "name": "Ben Carter",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2021-01-14",
+    "lifetime_value": 145.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-01001",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-14T15:03:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1011",
+    "email": "sofia.rossi@example.net",
+    "name": "Sofia Rossi",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2022-07-24",
+    "lifetime_value": 58.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-01101",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-14T15:50:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1012",
+    "email": "noah.williams@example.com",
+    "name": "Noah Williams",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2021-07-29",
+    "lifetime_value": 145.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-01201",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-14T16:37:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1013",
+    "email": "emma.johansson@example.org",
+    "name": "Emma Johansson",
+    "plan": "free",
+    "account_status": "active",
+    "signup_date": "2023-01-06",
+    "lifetime_value": 0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": []
+  },
+  {
+    "user_id": "U-1014",
+    "email": "kwame.mensah@example.com",
+    "name": "Kwame Mensah",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2022-06-26",
+    "lifetime_value": 145.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-01401",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-14T18:11:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1015",
+    "email": "chloe.dubois@example.net",
+    "name": "Chloe Dubois",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2021-09-13",
+    "lifetime_value": 58.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-01501",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-14T18:58:00+00:00"
+      },
+      {
+        "order_id": "ORD-01502",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-15T18:58:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1016",
+    "email": "raj.malhotra@example.org",
+    "name": "Raj Malhotra",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2022-08-24",
+    "lifetime_value": 435.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-01601",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-14T19:45:00+00:00"
+      },
+      {
+        "order_id": "ORD-01602",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-15T19:45:00+00:00"
+      },
+      {
+        "order_id": "ORD-01603",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-07-16T19:45:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1017",
+    "email": "grace.kim@example.com",
+    "name": "Grace Kim",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2024-03-28",
+    "lifetime_value": 29.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-01701",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-14T20:32:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1018",
+    "email": "ivan.petrov@example.net",
+    "name": "Ivan Petrov",
+    "plan": "free",
+    "account_status": "active",
+    "signup_date": "2024-09-16",
+    "lifetime_value": 0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": []
+  },
+  {
+    "user_id": "U-1019",
+    "email": "lena.fischer@example.org",
+    "name": "Lena Fischer",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2021-06-13",
+    "lifetime_value": 29.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-01901",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-14T22:06:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1020",
+    "email": "jake.morrison@example.com",
+    "name": "Jake Morrison",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2022-07-24",
+    "lifetime_value": 128.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-02099",
+        "amount": 12.0,
+        "currency": "USD",
+        "status": "paid",
+        "created_at": "2026-10-03T22:53:00+00:00"
+      },
+      {
+        "order_id": "ORD-02001",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-14T22:53:00+00:00"
+      },
+      {
+        "order_id": "ORD-02002",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-15T22:53:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1021",
+    "email": "olivia.chen@example.net",
+    "name": "Olivia Chen",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2023-01-29",
+    "lifetime_value": 58.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-02199",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "paid",
+        "created_at": "2026-10-08T23:40:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1022",
+    "email": "samuel.okafor@example.org",
+    "name": "Samuel Okafor",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2022-07-01",
+    "lifetime_value": 136.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-02299",
+        "amount": 49.0,
+        "currency": "USD",
+        "status": "paid",
+        "created_at": "2026-10-04T00:27:00+00:00"
+      },
+      {
+        "order_id": "ORD-02201",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T00:27:00+00:00"
+      },
+      {
+        "order_id": "ORD-02202",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-16T00:27:00+00:00"
+      },
+      {
+        "order_id": "ORD-02203",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-07-17T00:27:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1023",
+    "email": "rachel.adams@example.com",
+    "name": "Rachel Adams",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2024-07-24",
+    "lifetime_value": 406.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-02399",
+        "amount": 348.0,
+        "currency": "USD",
+        "status": "paid",
+        "created_at": "2026-10-06T01:14:00+00:00"
+      },
+      {
+        "order_id": "ORD-02301",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T01:14:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1024",
+    "email": "marco.bianchi@example.net",
+    "name": "Marco Bianchi",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2023-08-05",
+    "lifetime_value": 538.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-02499",
+        "amount": 480.0,
+        "currency": "USD",
+        "status": "paid",
+        "created_at": "2026-10-08T02:01:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1025",
+    "email": "anna.kowalski@example.org",
+    "name": "Anna Kowalski",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2024-11-10",
+    "lifetime_value": 295.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-02599",
+        "amount": 150.0,
+        "currency": "USD",
+        "status": "paid",
+        "created_at": "2026-10-11T02:48:00+00:00"
+      },
+      {
+        "order_id": "ORD-02501",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T02:48:00+00:00"
+      },
+      {
+        "order_id": "ORD-02502",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-16T02:48:00+00:00"
+      },
+      {
+        "order_id": "ORD-02503",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-07-17T02:48:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1026",
+    "email": "daniel.weber@example.com",
+    "name": "Daniel Weber",
+    "plan": "free",
+    "account_status": "active",
+    "signup_date": "2022-04-15",
+    "lifetime_value": 0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": []
+  },
+  {
+    "user_id": "U-1027",
+    "email": "victoria.hughes@example.net",
+    "name": "Victoria Hughes",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2023-04-02",
+    "lifetime_value": 58.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-02701",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T04:22:00+00:00"
+      },
+      {
+        "order_id": "ORD-02702",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-16T04:22:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1028",
+    "email": "greg.thompson@example.com",
+    "name": "Greg Thompson",
+    "plan": "free",
+    "account_status": "active",
+    "signup_date": "2024-03-07",
+    "lifetime_value": 0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": []
+  },
+  {
+    "user_id": "U-1029",
+    "email": "nina.alvarez@example.org",
+    "name": "Nina Alvarez",
+    "plan": "free",
+    "account_status": "active",
+    "signup_date": "2024-09-04",
+    "lifetime_value": 0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": []
+  },
+  {
+    "user_id": "U-1030",
+    "email": "peter.lindqvist@example.net",
+    "name": "Peter Lindqvist",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2024-08-09",
+    "lifetime_value": 87.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-03001",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T06:43:00+00:00"
+      },
+      {
+        "order_id": "ORD-03002",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-16T06:43:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1031",
+    "email": "carlos.mendes@example.com",
+    "name": "Carlos Mendes",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2021-10-13",
+    "lifetime_value": 377.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-03101",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T07:30:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1032",
+    "email": "mark.sullivan@example.com",
+    "name": "Mark Sullivan",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2022-06-23",
+    "lifetime_value": 435.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-03201",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T08:17:00+00:00"
+      },
+      {
+        "order_id": "ORD-03202",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-16T08:17:00+00:00"
+      },
+      {
+        "order_id": "ORD-03203",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-07-17T08:17:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1033",
+    "email": "jenny.walsh@example.net",
+    "name": "Jenny Walsh",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2024-04-10",
+    "lifetime_value": 116.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-03301",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T09:04:00+00:00"
+      },
+      {
+        "order_id": "ORD-03302",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-16T09:04:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1034",
+    "email": "kevin.oconnor@example.org",
+    "name": "Kevin Oconnor",
+    "plan": "free",
+    "account_status": "active",
+    "signup_date": "2021-10-11",
+    "lifetime_value": 0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": []
+  },
+  {
+    "user_id": "U-1035",
+    "email": "laura.bennett@example.com",
+    "name": "Laura Bennett",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2021-07-06",
+    "lifetime_value": 29.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-03501",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T10:38:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1036",
+    "email": "ahmed.hassan@example.net",
+    "name": "Ahmed Hassan",
+    "plan": "free",
+    "account_status": "active",
+    "signup_date": "2024-07-09",
+    "lifetime_value": 0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": []
+  },
+  {
+    "user_id": "U-1037",
+    "email": "julia.novak@example.org",
+    "name": "Julia Novak",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2023-05-15",
+    "lifetime_value": 87.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-03701",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T12:12:00+00:00"
+      },
+      {
+        "order_id": "ORD-03702",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-16T12:12:00+00:00"
+      },
+      {
+        "order_id": "ORD-03703",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-07-17T12:12:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1038",
+    "email": "it-admin@northwind-logistics.example",
+    "name": "Northwind Logistics IT",
+    "plan": "enterprise",
+    "account_status": "active",
+    "signup_date": "2023-02-28",
+    "lifetime_value": 9948.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "enterprise",
+    "orders": [
+      {
+        "order_id": "ORD-03801",
+        "amount": 4800.0,
+        "currency": "USD",
+        "status": "paid",
+        "created_at": "2026-09-15T12:59:00+00:00"
+      },
+      {
+        "order_id": "ORD-03802",
+        "amount": 4800.0,
+        "currency": "USD",
+        "status": "paid",
+        "created_at": "2026-08-16T12:59:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1039",
+    "email": "helen.park@example.com",
+    "name": "Helen Park",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2023-08-17",
+    "lifetime_value": 145.0,
+    "recent_refunds": 0,
+    "vip": true,
+    "profile": "vip",
+    "orders": [
+      {
+        "order_id": "ORD-03901",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T13:46:00+00:00"
+      },
+      {
+        "order_id": "ORD-03902",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-16T13:46:00+00:00"
+      },
+      {
+        "order_id": "ORD-03903",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-07-17T13:46:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1040",
+    "email": "finance@contoso-retail.example",
+    "name": "Contoso Retail Finance",
+    "plan": "enterprise",
+    "account_status": "active",
+    "signup_date": "2024-02-08",
+    "lifetime_value": 4800.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "enterprise",
+    "orders": [
+      {
+        "order_id": "ORD-04001",
+        "amount": 4800.0,
+        "currency": "USD",
+        "status": "paid",
+        "created_at": "2026-09-15T14:33:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1041",
+    "email": "brian.foster@example.net",
+    "name": "Brian Foster",
+    "plan": "pro",
+    "account_status": "suspended",
+    "signup_date": "2024-01-05",
+    "lifetime_value": 116.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "suspended",
+    "orders": [
+      {
+        "order_id": "ORD-04101",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T15:20:00+00:00"
+      },
+      {
+        "order_id": "ORD-04102",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-16T15:20:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1042",
+    "email": "sara.lindgren@example.org",
+    "name": "Sara Lindgren",
+    "plan": "free",
+    "account_status": "suspended",
+    "signup_date": "2022-08-25",
+    "lifetime_value": 0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "suspended",
+    "orders": []
+  },
+  {
+    "user_id": "U-1043",
+    "email": "paul.dawson@example.com",
+    "name": "Paul Dawson",
+    "plan": "free",
+    "account_status": "closed",
+    "signup_date": "2023-07-19",
+    "lifetime_value": 0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "closed",
+    "orders": []
+  },
+  {
+    "user_id": "U-1044",
+    "email": "mike.turner@example.net",
+    "name": "Mike Turner",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2025-01-13",
+    "lifetime_value": 406.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-04401",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T17:41:00+00:00"
+      },
+      {
+        "order_id": "ORD-04402",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-16T17:41:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1045",
+    "email": "amy.roberts@example.org",
+    "name": "Amy Roberts",
+    "plan": "free",
+    "account_status": "active",
+    "signup_date": "2023-11-06",
+    "lifetime_value": 0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": []
+  },
+  {
+    "user_id": "U-1046",
+    "email": "chris.evans@example.com",
+    "name": "Chris Evans",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2022-09-04",
+    "lifetime_value": 435.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-04601",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T19:15:00+00:00"
+      },
+      {
+        "order_id": "ORD-04602",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-16T19:15:00+00:00"
+      },
+      {
+        "order_id": "ORD-04603",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-07-17T19:15:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1047",
+    "email": "derek.stone@example.com",
+    "name": "Derek Stone",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2022-02-12",
+    "lifetime_value": 658.0,
+    "recent_refunds": 1,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-04799",
+        "amount": 600.0,
+        "currency": "USD",
+        "status": "paid",
+        "created_at": "2026-10-09T22:23:00+00:00"
+      },
+      {
+        "order_id": "ORD-04701",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T22:23:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1048",
+    "email": "tessa.morgan@example.com",
+    "name": "Tessa Morgan",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2025-05-14",
+    "lifetime_value": 87.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-04801",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T23:10:00+00:00"
+      },
+      {
+        "order_id": "ORD-04802",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-16T23:10:00+00:00"
+      },
+      {
+        "order_id": "ORD-04803",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-07-17T23:10:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1049",
+    "email": "leo.harper@example.net",
+    "name": "Leo Harper",
+    "plan": "pro",
+    "account_status": "active",
+    "signup_date": "2022-10-26",
+    "lifetime_value": 58.0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": [
+      {
+        "order_id": "ORD-04901",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-09-15T23:57:00+00:00"
+      },
+      {
+        "order_id": "ORD-04902",
+        "amount": 29.0,
+        "currency": "USD",
+        "status": "delivered",
+        "created_at": "2026-08-16T23:57:00+00:00"
+      }
+    ]
+  },
+  {
+    "user_id": "U-1050",
+    "email": "mia.castillo@example.org",
+    "name": "Mia Castillo",
+    "plan": "free",
+    "account_status": "active",
+    "signup_date": "2023-01-14",
+    "lifetime_value": 0,
+    "recent_refunds": 0,
+    "vip": false,
+    "profile": "standard",
+    "orders": []
+  }
+]

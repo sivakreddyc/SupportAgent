@@ -1,0 +1,999 @@
+[
+  {
+    "ticket_id": "TCK-1001",
+    "subject": "How do I export my projects to CSV?",
+    "customer_email": "maria.gonzalez@example.com",
+    "created_at": "2026-10-14T08:00:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hi there,\n\nI'd like to get a copy of all my projects and their tasks into a spreadsheet so I can share a status report with my manager. Is there a way to export everything to CSV, or do I have to do it one project at a time?\n\nThanks,\nMaria",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1002",
+    "subject": "Changing the email address on my account",
+    "customer_email": "dev.patel@example.com",
+    "created_at": "2026-10-14T08:47:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Hello,\n\nI'm moving to a new company email and want to change the login address on my Brightdesk account from dev.patel@example.com to my new one. Will I lose my projects if I change it? What are the steps?\n\nDev",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1003",
+    "subject": "Adding a teammate to my workspace",
+    "customer_email": "hannah.schmidt@example.org",
+    "created_at": "2026-10-14T09:34:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hi, I just upgraded to Pro and want to invite two colleagues to my workspace. I clicked around in Settings but couldn't find where to send invites. Could you point me in the right direction?",
+    "messages": [
+      {
+        "author": "support",
+        "body": "Hi Hannah, invites live under Settings > Members > Invite. Let us know if you don't see it!",
+        "at": "2026-10-14T11:04:00+00:00"
+      },
+      {
+        "author": "hannah.schmidt@example.org",
+        "body": "Thanks! I see Members but the Invite button is greyed out. Do I need to do something first?",
+        "at": "2026-10-14T12:34:00+00:00"
+      }
+    ],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1004",
+    "subject": "Where can I find my invoices?",
+    "customer_email": "tom.becker@example.net",
+    "created_at": "2026-10-14T10:21:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Hey team, my accountant needs PDF invoices for the last six months of my Pro subscription. Where in the app can I get them? I only see the current plan on the billing page.\n\nCheers, Tom",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1005",
+    "subject": "Connecting Google Calendar",
+    "customer_email": "aiko.tanaka@example.com",
+    "created_at": "2026-10-14T11:08:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hello! I'd like task due dates to show up in my Google Calendar. I saw there's an integration but I'm not sure how to connect it or whether it syncs both ways. Can you explain how it works?\n\nAiko",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1006",
+    "subject": "Dark mode in the mobile app",
+    "customer_email": "lucas.martin@example.org",
+    "created_at": "2026-10-14T11:55:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Hi, is there a dark mode in the iPhone app? I found it on the web version but not on mobile. Running the latest version from the App Store.",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1007",
+    "subject": "Renaming a project",
+    "customer_email": "priya.raman@example.com",
+    "created_at": "2026-10-14T12:42:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Quick question: how do I rename a project? We changed our client's name and I'd like the project title to match. Will links I've shared before keep working after the rename?",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1008",
+    "subject": "Reports show the wrong time zone",
+    "customer_email": "owen.brooks@example.net",
+    "created_at": "2026-10-14T13:29:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hi, our weekly reports show times in UTC but our whole team is in Chicago. Is there a workspace setting to change the time zone for reports and due dates?\n\nThanks,\nOwen",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1009",
+    "subject": "List of keyboard shortcuts?",
+    "customer_email": "fatima.zahra@example.org",
+    "created_at": "2026-10-14T14:16:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Hello, I'm a heavy keyboard user. Is there a list of keyboard shortcuts somewhere? In particular I'm looking for a shortcut to create a new task and to move a task between columns.",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1010",
+    "subject": "Importing boards from Trello",
+    "customer_email": "ben.carter@example.com",
+    "created_at": "2026-10-14T15:03:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hi Brightdesk team,\n\nWe're moving our team over from Trello. We have about 15 boards. Is there an importer, and does it keep checklists, labels and attachments?\n\nBen",
+    "messages": [
+      {
+        "author": "support",
+        "body": "Hi Ben, yes, there's a Trello importer under Settings > Import. It keeps checklists and labels; attachments over 25 MB are skipped.",
+        "at": "2026-10-14T17:03:00+00:00"
+      },
+      {
+        "author": "ben.carter@example.com",
+        "body": "Great. Does it also bring over the comments on each card?",
+        "at": "2026-10-14T20:03:00+00:00"
+      }
+    ],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1011",
+    "subject": "Setting up recurring tasks",
+    "customer_email": "sofia.rossi@example.net",
+    "created_at": "2026-10-14T15:50:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Hi! I want a task called 'Send timesheet' to repeat every Friday. I can't see a repeat option when creating a task. Is this possible on the Free plan?",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1012",
+    "subject": "What do I get with Pro?",
+    "customer_email": "noah.williams@example.com",
+    "created_at": "2026-10-14T16:37:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hello, I'm on the Free plan and thinking about upgrading to Pro for my small design studio (4 people). What are the main differences, and can I switch back to Free later if it isn't a fit?",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1013",
+    "subject": "Updating the card on file",
+    "customer_email": "emma.johansson@example.org",
+    "created_at": "2026-10-14T17:24:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hi, my company card expires next month and I received a new one. How do I update the payment method for our Pro subscription so the next renewal goes through?\n\nThanks, Emma",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1014",
+    "subject": "Slack notifications for a single project",
+    "customer_email": "kwame.mensah@example.com",
+    "created_at": "2026-10-14T18:11:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Hi there, we connected Slack and now every project posts to our channel, which is a bit noisy. Can I limit notifications to just one project?",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1015",
+    "subject": "Archive vs delete a project",
+    "customer_email": "chloe.dubois@example.net",
+    "created_at": "2026-10-14T18:58:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "What's the difference between archiving and deleting a project? I want to clean up old client work but might need to look something up next year.",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1016",
+    "subject": "Custom fields on tasks",
+    "customer_email": "raj.malhotra@example.org",
+    "created_at": "2026-10-14T19:45:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hello, can I add a custom field to tasks, for example a single-select list for 'Client' and a number field for 'Estimated hours'? And can I filter the board by those fields?\n\nRaj",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1017",
+    "subject": "Password reset email never arrives",
+    "customer_email": "grace.kim@example.com",
+    "created_at": "2026-10-14T20:32:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hi, I forgot my password and clicked 'Forgot password' three times this morning but no email has arrived. I checked my spam folder too. My login is grace.kim@example.com. Can you help me get back in?",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1018",
+    "subject": "API rate limits on the Pro plan",
+    "customer_email": "ivan.petrov@example.net",
+    "created_at": "2026-10-14T21:19:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Hello, I'm writing a small script that syncs tasks from our internal tool into Brightdesk using your REST API. What are the rate limits on Pro, and is there a header that tells me how many requests I have left?",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1019",
+    "subject": "Loving the new timeline view",
+    "customer_email": "lena.fischer@example.org",
+    "created_at": "2026-10-14T22:06:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Just wanted to say the new timeline view is fantastic. It's made planning our product launch so much easier. One small idea: it would be great to be able to colour bars by assignee. Keep up the great work!\n\nLena",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [],
+      "expected_outcome": "auto_approve"
+    }
+  },
+  {
+    "ticket_id": "TCK-1020",
+    "subject": "Charged twice this month",
+    "customer_email": "jake.morrison@example.com",
+    "created_at": "2026-10-14T22:53:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hi, I was charged $12.00 twice on October 3rd for my Pro subscription; my bank statement shows two identical charges. Could you refund the duplicate charge please?\n\nJake",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "REFUND"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1021",
+    "subject": "Forgot to cancel before renewal",
+    "customer_email": "olivia.chen@example.net",
+    "created_at": "2026-10-14T23:40:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hello, I meant to cancel my monthly Pro plan before it renewed but forgot, and I was charged $29 yesterday. I haven't used the account since. Is it possible to get a refund for this month?\n\nOlivia",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "REFUND"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1022",
+    "subject": "Refund for the Reports add-on",
+    "customer_email": "samuel.okafor@example.org",
+    "created_at": "2026-10-15T00:27:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Hi, I bought the Advanced Reports add-on for $49 last week but it doesn't do what I need (no Gantt export). I'd like my money back for the add-on please. Happy to keep the base plan.",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "REFUND"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1023",
+    "subject": "Refund for annual plan",
+    "customer_email": "rachel.adams@example.com",
+    "created_at": "2026-10-15T01:14:00+00:00",
+    "priority": "high",
+    "status": "open",
+    "body": "Hello,\n\nOur team renewed the annual Pro plan for $348 on October 1st, but we've since decided to consolidate on a different tool company-wide. We haven't used it since the renewal. Can we get a full refund of the $348?\n\nRachel Adams\nOperations",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "REFUND",
+        "REFUND_HIGH_VALUE"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1024",
+    "subject": "Billed $480 for seats we never used",
+    "customer_email": "marco.bianchi@example.net",
+    "created_at": "2026-10-15T02:01:00+00:00",
+    "priority": "high",
+    "status": "open",
+    "body": "Hi, we were billed $480 for 10 extra seats in September. Those seats were added by mistake during onboarding and nobody ever logged into them. Please refund the $480 and remove the seats.\n\nMarco",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "REFUND",
+        "REFUND_HIGH_VALUE"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1025",
+    "subject": "Accidental upgrade, need refund",
+    "customer_email": "anna.kowalski@example.org",
+    "created_at": "2026-10-15T02:48:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hi, I accidentally upgraded our workspace to 5 additional seats and was charged $150. I clicked the wrong button while trying to view pricing. Could you reverse the $150 charge and put us back to the original plan?\n\nAnna",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "REFUND",
+        "REFUND_HIGH_VALUE"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1026",
+    "subject": "GDPR data subject request",
+    "customer_email": "daniel.weber@example.com",
+    "created_at": "2026-10-15T03:35:00+00:00",
+    "priority": "high",
+    "status": "open",
+    "body": "To whom it may concern,\n\nUnder Article 15 and Article 17 of the GDPR, I am submitting a data subject request. Please provide a copy of all personal data you hold about me and then erase it from your systems. Please confirm receipt and the expected timeline.\n\nDaniel Weber",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "LEGAL"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1027",
+    "subject": "Our lawyer is reviewing your terms",
+    "customer_email": "victoria.hughes@example.net",
+    "created_at": "2026-10-15T04:22:00+00:00",
+    "priority": "high",
+    "status": "open",
+    "body": "Hello,\n\nOur lawyer is reviewing your data processing terms after the change you announced last month. We need a signed copy of the DPA and a list of all sub-processors by Friday, otherwise our legal team has advised us to pause use of the service.\n\nVictoria Hughes\nHead of Operations",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "LEGAL"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1028",
+    "subject": "Taking this to small claims court",
+    "customer_email": "greg.thompson@example.com",
+    "created_at": "2026-10-15T05:09:00+00:00",
+    "priority": "high",
+    "status": "open",
+    "body": "I was promised a service credit three months ago for the week your exports were broken and it never appeared on my bill. I've emailed twice. If this isn't resolved by the end of the month I will file in small claims court.\n\nGreg Thompson",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "LEGAL"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1029",
+    "subject": "I think my account was hacked",
+    "customer_email": "nina.alvarez@example.org",
+    "created_at": "2026-10-15T05:56:00+00:00",
+    "priority": "urgent",
+    "status": "open",
+    "body": "Hi, I just got a login alert from a city I've never been to, and when I logged in two of my projects had been deleted and a new API token had been created. I think my account was hacked. I've changed my password, but what else should I do?\n\nNina",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "SECURITY"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1030",
+    "subject": "Phishing email pretending to be Brightdesk",
+    "customer_email": "peter.lindqvist@example.net",
+    "created_at": "2026-10-15T06:43:00+00:00",
+    "priority": "high",
+    "status": "open",
+    "body": "Hello, several people on my team received an email that looks like it comes from Brightdesk asking them to 're-verify billing details' through a link. The sender domain is slightly off. Is this a phishing attempt? One colleague may have entered her login before we noticed.\n\nPeter",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "SECURITY"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1031",
+    "subject": "API key leaked in a public repo",
+    "customer_email": "carlos.mendes@example.com",
+    "created_at": "2026-10-15T07:30:00+00:00",
+    "priority": "urgent",
+    "status": "open",
+    "body": "Hi, a contractor pushed a config file containing our workspace API key to a public GitHub repository. It was public for about six hours before we noticed. We're worried about unauthorized access to our client data. How can we revoke the key and see whether it was used?\n\nCarlos",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "SECURITY"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1032",
+    "subject": "FOURTH time asking about my export",
+    "customer_email": "mark.sullivan@example.com",
+    "created_at": "2026-10-15T08:17:00+00:00",
+    "priority": "high",
+    "status": "open",
+    "body": "This is the FOURTH time I am writing about the same problem and nobody has bothered to actually help. Every reply is a copy-paste that ignores what I said. My CSV export has been failing for two weeks. This is absolutely unacceptable and frankly ridiculous for a paid product. I am furious. Fix it or I'm gone.",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "ANGRY"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1033",
+    "subject": "Your price increase is a joke",
+    "customer_email": "jenny.walsh@example.net",
+    "created_at": "2026-10-15T09:04:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "I just saw that my plan is going up 40% with two weeks notice. Are you kidding me? I've been a loyal customer for four years and this is how you treat people? Disgraceful. I'm angry and I'm telling everyone I know to avoid you.",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "ANGRY"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1034",
+    "subject": "Worst support experience ever",
+    "customer_email": "kevin.oconnor@example.org",
+    "created_at": "2026-10-15T09:51:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "I waited five days for a reply and got an answer to a question I never asked. This is the worst support I have ever dealt with. I'm sick of chasing you people. Get someone competent to read my original message and answer it properly.",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "ANGRY"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1035",
+    "subject": "URGENT: nobody on our team can log in",
+    "customer_email": "laura.bennett@example.com",
+    "created_at": "2026-10-15T10:38:00+00:00",
+    "priority": "urgent",
+    "status": "open",
+    "body": "Since 9:05 this morning none of the 23 people in our workspace can log in; everyone gets 'Something went wrong'. We run payroll approvals through Brightdesk and the deadline is at 2pm today. This is a production outage for us and we need help immediately.\n\nLaura Bennett",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "CRITICAL_URGENCY"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1036",
+    "subject": "API returning 500 for every request",
+    "customer_email": "ahmed.hassan@example.net",
+    "created_at": "2026-10-15T11:25:00+00:00",
+    "priority": "urgent",
+    "status": "open",
+    "body": "Every call to the tasks API has returned HTTP 500 for the last 40 minutes. Our order processing depends on it and our checkout is effectively down. This is critical for us. Status page says all systems operational. Please escalate right away.\n\nAhmed",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "CRITICAL_URGENCY"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1037",
+    "subject": "All our projects disappeared",
+    "customer_email": "julia.novak@example.org",
+    "created_at": "2026-10-15T12:12:00+00:00",
+    "priority": "urgent",
+    "status": "open",
+    "body": "Emergency: after this morning's sync all 60 projects in our workspace are gone. The sidebar is empty for everyone. We have a client delivery today and years of history in there. Please tell me the data can be restored, we need this treated as top priority.\n\nJulia",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "CRITICAL_URGENCY"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1038",
+    "subject": "Configuring SAML SSO with Okta",
+    "customer_email": "it-admin@northwind-logistics.example",
+    "created_at": "2026-10-15T12:59:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hello, we're rolling out Brightdesk to our 400-person logistics team and want to enable SAML SSO through Okta. Could you share the ACS URL and entity ID we need, and confirm whether just-in-time provisioning is supported?\n\nNorthwind Logistics IT",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "enterprise",
+      "expected_rules": [
+        "VIP"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1039",
+    "subject": "Exporting the audit log for our seats",
+    "customer_email": "helen.park@example.com",
+    "created_at": "2026-10-15T13:46:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hi, for our annual internal review I need a log of who was added to or removed from our workspace over the past year. Is there an audit log I can export?\n\nThanks,\nHelen",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "vip",
+      "expected_rules": [
+        "VIP"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1040",
+    "subject": "Invoices in EUR instead of USD",
+    "customer_email": "finance@contoso-retail.example",
+    "created_at": "2026-10-15T14:33:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hello, our finance department is moving to a European entity next quarter. Can our enterprise invoices be billed in EUR with our new VAT number, starting with the January invoice?\n\nContoso Retail Finance",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "enterprise",
+      "expected_rules": [
+        "VIP"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1041",
+    "subject": "Why is my account suspended?",
+    "customer_email": "brian.foster@example.net",
+    "created_at": "2026-10-15T15:20:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hi, when I try to log in I see 'This account has been suspended'. I haven't received any email about it. What happened, and how do I get access back?\n\nBrian",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "suspended",
+      "expected_rules": [
+        "ACCOUNT_NOT_ACTIVE"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1042",
+    "subject": "Getting my data out of a suspended account",
+    "customer_email": "sara.lindgren@example.org",
+    "created_at": "2026-10-15T16:07:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Hello, my account was suspended after a payment failed. I don't plan to continue, but I need to export my task history for my records. Is there a way to do that while the account is suspended?",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "suspended",
+      "expected_rules": [
+        "ACCOUNT_NOT_ACTIVE"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1043",
+    "subject": "Reopening my old account",
+    "customer_email": "paul.dawson@example.com",
+    "created_at": "2026-10-15T16:54:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Hi, I closed my Brightdesk account last spring when my startup closed its doors. I'm starting a new project and would like to reopen it, ideally with my old projects. Is that possible?\n\nPaul",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "closed",
+      "expected_rules": [
+        "ACCOUNT_NOT_ACTIVE"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1044",
+    "subject": "not working",
+    "customer_email": "mike.turner@example.net",
+    "created_at": "2026-10-15T17:41:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "it doesnt work",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "LOW_CONFIDENCE"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1045",
+    "subject": "Following up",
+    "customer_email": "amy.roberts@example.org",
+    "created_at": "2026-10-15T18:28:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Hi, following up on the thing from last week. Any update?",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "LOW_CONFIDENCE"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1046",
+    "subject": "??",
+    "customer_email": "chris.evans@example.com",
+    "created_at": "2026-10-15T19:15:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "help pls",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "LOW_CONFIDENCE"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1047",
+    "subject": "How do I share a board read-only?",
+    "customer_email": "jordan.price@unknown-mail.example",
+    "created_at": "2026-10-15T20:02:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Hello, a client of ours uses Brightdesk and asked whether they can share a board with us so we can view it but not edit anything. Is that possible, and do we need our own account?\n\nJordan",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "unknown",
+      "expected_rules": [
+        "UNKNOWN_USER"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1048",
+    "subject": "Pricing for a team of 40",
+    "customer_email": "procurement@fabrikam-health.example",
+    "created_at": "2026-10-15T20:49:00+00:00",
+    "priority": "normal",
+    "status": "open",
+    "body": "Good afternoon, we're evaluating project tools for a team of about 40 people. Could you send pricing for Pro versus Enterprise, and let us know whether you offer annual billing and a trial period?\n\nFabrikam Health Procurement",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "unknown",
+      "expected_rules": [
+        "UNKNOWN_USER"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1049",
+    "subject": "Discount for nonprofits?",
+    "customer_email": "volunteer.coordinator@greenleaf-trust.example",
+    "created_at": "2026-10-15T21:36:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Hi! We're a small nonprofit that runs community gardens. Do you offer a nonprofit discount, and what documentation would you need from us?\n\nThanks so much",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "unknown",
+      "expected_rules": [
+        "UNKNOWN_USER"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1050",
+    "subject": "Refund my $600 NOW or I call my lawyer",
+    "customer_email": "derek.stone@example.com",
+    "created_at": "2026-10-15T22:23:00+00:00",
+    "priority": "urgent",
+    "status": "open",
+    "body": "You charged me $600 for an annual renewal I explicitly cancelled in August. I have the cancellation email. I want my money back, all $600, this week. If I don't see the refund I'm filing a chargeback and my lawyer will be in touch. Unbelievable.",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "REFUND",
+        "REFUND_HIGH_VALUE",
+        "LEGAL",
+        "ANGRY"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1051",
+    "subject": "Moving tasks between workspaces",
+    "customer_email": "tessa.morgan@example.com",
+    "created_at": "2026-10-15T23:10:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Hi, I have two workspaces (personal and work) and want to move a handful of tasks from one to the other without retyping them. Is there a way to do that?\n\n[mock:refusal]",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "LLM_REFUSAL"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1052",
+    "subject": "Changing the default board view",
+    "customer_email": "leo.harper@example.net",
+    "created_at": "2026-10-15T23:57:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Hello, every time I open a project it shows the list view, but I prefer the board view. Can I make the board the default for all my projects?\n\n[mock:unsafe-draft]",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "UNSAFE_DRAFT"
+      ],
+      "expected_outcome": "human_review"
+    }
+  },
+  {
+    "ticket_id": "TCK-1053",
+    "subject": "Printing a project summary",
+    "customer_email": "mia.castillo@example.org",
+    "created_at": "2026-10-16T00:44:00+00:00",
+    "priority": "low",
+    "status": "open",
+    "body": "Hi there, is there a printer-friendly version of the project overview page? I'd like to bring a one-page summary to our Monday meeting.\n\n[mock:no-analysis]",
+    "messages": [],
+    "drafts": [],
+    "notes": [],
+    "meta": {
+      "customer_profile": "standard",
+      "expected_rules": [
+        "LLM_NO_ANALYSIS"
+      ],
+      "expected_outcome": "human_review"
+    }
+  }
+]

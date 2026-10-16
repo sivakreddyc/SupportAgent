@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Tickets{% endblock %}
+{% block content %}
+<h1>Tickets{% if status and status != "all" %} · {{ status }}{% endif %}</h1>
+<p class="muted" data-testid="ticket-count" data-total="{{ total }}">{{ total }} tickets</p>
+<table data-testid="ticket-table">
+  <thead><tr><th>ID</th><th>Subject</th><th>Customer</th><th>Priority</th><th>Status</th><th>Created</th></tr></thead>
+  <tbody>
+  {% for t in tickets %}
+  <tr data-testid="ticket-row" data-ticket-id="{{ t.ticket_id }}" data-status="{{ t.status }}">
+    <td><a href="/tickets/{{ t.ticket_id }}" data-testid="ticket-link">{{ t.ticket_id }}</a></td>
+    <td data-testid="ticket-row-subject">{{ t.subject }}</td>
+    <td data-testid="ticket-row-email">{{ t.customer_email }}</td>
+    <td data-testid="ticket-row-priority">{{ t.priority or "" }}</td>
+    <td><span class="badge {{ t.status }}" data-testid="ticket-status-badge">{{ t.status }}</span></td>
+    <td><time data-testid="ticket-row-created-at" datetime="{{ t.created_at.isoformat() }}">{{ t.created_at.strftime("%Y-%m-%d %H:%M") }}</time></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% if not tickets %}<p class="muted" data-testid="empty-state">No tickets on this page.</p>{% endif %}
+{% set qs = "&status=" ~ status if status else "" %}
+<nav data-testid="pagination" data-page="{{ page_no }}" data-total-pages="{{ total_pages }}" style="margin-top: 12px;">
+  {% if page_no > 1 %}<a href="/tickets?page={{ page_no - 1 }}{{ qs }}" data-testid="prev-page">&larr; Prev</a>{% endif %}
+  <span>Page {{ page_no }} of {{ total_pages }}</span>
+  {% if page_no < total_pages %}<a href="/tickets?page={{ page_no + 1 }}{{ qs }}" data-testid="next-page">Next &rarr;</a>{% endif %}
+</nav>
+<div class="card" data-testid="admin-panel">
+  <form method="post" action="/admin/generate" data-testid="admin-generate-form" style="display:inline">
+    <input name="n" type="number" min="1" max="5000" value="10" data-testid="admin-generate-n">
+    <button type="submit" data-testid="admin-generate-submit">Generate tickets</button>
+  </form>
+  <form method="post" action="/admin/reset" data-testid="admin-reset-form" style="display:inline">
+    <button type="submit" data-testid="admin-reset-submit">Reset to seed</button>
+  </form>
+</div>
+{% endblock %}

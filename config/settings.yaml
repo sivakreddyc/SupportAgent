@@ -1,0 +1,31 @@
+# Defaults for support_agent.common.config.Settings. Any key can be overridden by env var SA_<KEY>.
+queue_max_size: 1000          # unset / 0 / negative -> 1000
+worker_count: 4
+max_retries: 3
+ticket_timeout_seconds: 60
+poll_interval_seconds: 15
+poll_jitter_ratio: 0.1
+review_dispatch_interval_seconds: 3
+
+browser_headless: true
+browser_page_pool: 3
+browser_timeout_ms: 10000
+ticket_ui_url: http://localhost:8001
+ticket_ui_user: agent
+ticket_ui_password: agent
+
+user_service_url: http://localhost:8002
+user_service_api_key: dev-key
+user_service_timeout_seconds: 2
+
+llm_provider: mock            # mock | anthropic (anthropic reads ANTHROPIC_API_KEY)
+llm_model: claude-opus-5-5
+llm_effort: medium
+llm_max_tokens: 4096
+llm_server_fallback: true
+
+db_path: data/support_agent.db
+log_level: INFO
+log_file: logs/agent.jsonl
+metrics_sample_interval_seconds: 5
+ops_api_port: 8003

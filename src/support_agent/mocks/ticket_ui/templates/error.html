@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Error {{ code }}{% endblock %}
+{% block content %}
+<div class="card" data-testid="{{ testid }}" data-status-code="{{ code }}">
+  <h1>Error {{ code }}</h1>
+  <p class="error" data-testid="error-message">{{ message }}</p>
+</div>
+{% endblock %}
